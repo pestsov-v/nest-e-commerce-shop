@@ -21,65 +21,61 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  async createProduct(@Res() res: Response, @Body() dto: CreateProductDto) {
+  async createProduct(@Body() dto: CreateProductDto) {
     const product = await this.productService.createProduct(dto);
 
-    return res.status(201).json({
+    return {
       status: 'success',
       data: {
         data: product,
       },
-    });
+    };
   }
 
   @Get()
-  async getProducts(@Res() res: Response) {
+  async getProducts() {
     const products = await this.productService.getProducts();
 
     if (!products)
       throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
 
-    return res.status(200).json({
+    return {
       status: 'success',
       amount: products.length,
       data: {
         data: products,
       },
-    });
+    };
   }
 
   @Get(':id')
-  async getProduct(@Res() res: Response, @Param('id') id: string) {
+  async getProduct(@Param('id') id: string) {
     const product = await this.productService.getProduct(id);
 
     if (!product)
       throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
 
-    return res.status(200).json({
+    return {
       status: 'success',
       data: {
         data: product,
       },
-    });
+    };
   }
 
   @Patch(':id')
-  async updateProduct(
-    @Res() res: Response,
-    @Param('id') id: string,
-    @Body() dto: UpdateProductDto,
-  ) {
+  async updateProduct(@Param('id') id: string, @Body() dto: UpdateProductDto) {
     const product = await this.productService.updateProduct(id, dto);
 
     if (!product)
       throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
 
-    return res.status(200).json({
+    return {
       status: 'success',
       data: {
         data: product,
       },
-    });
+    };
   }
 
   @Delete(':id')
@@ -88,12 +84,12 @@ export class ProductController {
     if (!product)
       throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
 
-    return res.status(200).json({
+    return {
       status: 'success',
       data: {
         message: 'Продукт был успешно удалён',
         removed_product: product.name,
       },
-    });
+    };
   }
 }

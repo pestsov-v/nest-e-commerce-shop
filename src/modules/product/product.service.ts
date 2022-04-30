@@ -1,34 +1,62 @@
-import { Injectable } from '@nestjs/common';
-import { ModelType } from '@typegoose/typegoose/lib/types';
-import { InjectModel } from 'nestjs-typegoose';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.tdo';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ProductModel } from './product.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ProductRepository } from './product.reposity';
+import { Product } from './product.entity';
+import { NOT_FOUND_PRODUCT } from './product.constants';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProductService {
   constructor(
-    @InjectModel(ProductModel)
-    private readonly productModel: ModelType<ProductModel>,
+    @InjectRepository(ProductRepository)
+    private productRepository: Repository<Product>,
   ) {}
 
-  async createProduct(dto: CreateProductDto) {
-    return await this.productModel.create(dto);
+  async createProduct(dto: CreateProductDto): Promise<Product> {
+    const product = this.productRepository.save(dto);
+
+    console.log(product);
+
+    return product;
+  }
+  //
+  async getProducts(): Promise<Product[]> {
+    const products = await this.productRepository.find();
+
+    if (!products) {
+      throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
+    }
+
+    return products;
   }
 
-  async getProducts() {
-    return this.productModel.find();
-  }
+  async getProduct(id: string): Promise<Product> {
+    const product = await this.productRepository.findOne(id);
 
-  async getProduct(id: string) {
-    return this.productModel.findById(id);
+    if (!product) {
+      throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
+    }
+
+    return product;
   }
 
   async updateProduct(id: string, dto: UpdateProductDto) {
-    return this.productModel.findByIdAndUpdate(id, dto, { new: true });
+    const product = await this.productRepository.update(id, dto);
+    console.log(product);
+    if (!product)
+      throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
+
+    return product;
   }
 
   async deleteProduct(id: string) {
-    return this.productModel.findByIdAndDelete(id);
+    const product = await this.productRepository.delete(id);
+
+    if (!product)
+      throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
+
+    return product;
   }
 }

@@ -17,13 +17,11 @@ export class ProductService {
   async createProduct(dto: CreateProductDto): Promise<Product> {
     const product = this.productRepository.save(dto);
 
-    console.log(product);
-
     return product;
   }
   //
   async getProducts(): Promise<Product[]> {
-    const products = await this.productRepository.find();
+    const products: Product[] = await this.productRepository.find();
 
     if (!products) {
       throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
@@ -33,7 +31,7 @@ export class ProductService {
   }
 
   async getProduct(id: string): Promise<Product> {
-    const product = await this.productRepository.findOne(id);
+    const product: Product = await this.productRepository.findOne(id);
 
     if (!product) {
       throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
@@ -42,21 +40,25 @@ export class ProductService {
     return product;
   }
 
-  async updateProduct(id: string, dto: UpdateProductDto) {
-    const product = await this.productRepository.update(id, dto);
-    console.log(product);
+  async updateProduct(id: string, dto: UpdateProductDto): Promise<Product> {
+    const product: Product = await this.getProduct(id);
+
     if (!product)
       throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
 
-    return product;
+    product.name = dto.name;
+    product.price = dto.price;
+    product.active = dto.active;
+
+    return await this.productRepository.save(product);
   }
 
-  async deleteProduct(id: string) {
-    const product = await this.productRepository.delete(id);
+  async deleteProduct(id: string): Promise<Product> {
+    const product: Product = await this.getProduct(id);
 
     if (!product)
       throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
 
-    return product;
+    return await this.productRepository.remove(product);
   }
 }

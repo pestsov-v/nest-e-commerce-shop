@@ -10,8 +10,10 @@ import {
 import { CreateProductDto } from './dto/create-product.tdo';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductService } from './product.service';
-import { productResponses } from './responses/product.responses';
-import { productsResponses } from './responses/products.responses';
+import { ProductGetResponses } from './responses/product.get.responses';
+import { productsGetResponses } from './responses/products.get.responses';
+import { Product } from './product.entity';
+import { ProductDeleteResponses } from './responses/product.delete.responses';
 
 @Controller('product')
 export class ProductController {
@@ -20,7 +22,7 @@ export class ProductController {
   @Post()
   async createProduct(
     @Body() dto: CreateProductDto,
-  ): Promise<productResponses> {
+  ): Promise<ProductGetResponses> {
     const product = await this.productService.createProduct(dto);
 
     return {
@@ -30,8 +32,8 @@ export class ProductController {
   }
 
   @Get()
-  async getProducts(): Promise<productsResponses> {
-    const products = await this.productService.getProducts();
+  async getProducts(): Promise<productsGetResponses> {
+    const products: Product[] = await this.productService.getProducts();
 
     return {
       status: 'success',
@@ -43,8 +45,8 @@ export class ProductController {
   }
 
   @Get(':id')
-  async getProduct(@Param('id') id: string): Promise<productResponses> {
-    const product = await this.productService.getProduct(id);
+  async getProduct(@Param('id') id: string): Promise<ProductGetResponses> {
+    const product: Product = await this.productService.getProduct(id);
 
     return {
       status: 'success',
@@ -56,8 +58,8 @@ export class ProductController {
   async updateProduct(
     @Param('id') id: string,
     @Body() dto: UpdateProductDto,
-  ) {
-    const product = await this.productService.updateProduct(id, dto);
+  ): Promise<ProductGetResponses> {
+    const product: Product = await this.productService.updateProduct(id, dto);
 
     return {
       status: 'success',
@@ -66,7 +68,9 @@ export class ProductController {
   }
 
   @Delete(':id')
-  async deleteProduct(@Param('id') id: string) {
+  async deleteProduct(
+    @Param('id') id: string,
+  ): Promise<ProductDeleteResponses> {
     const product = await this.productService.deleteProduct(id);
 
     return {

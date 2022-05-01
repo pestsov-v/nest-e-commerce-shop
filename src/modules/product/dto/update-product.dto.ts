@@ -1,13 +1,13 @@
-import { IsNumber, IsString, Min } from 'class-validator';
+import { IsBoolean, IsNumber, IsString, Min } from 'class-validator';
 
 export class UpdateProductDto {
   @IsString()
-  name: string;
+  name?: string;
 
   @Min(0)
   @IsNumber()
-  price: number;
+  price?: number;
 
-  @IsString()
-  updatedAt: string;
+  @IsBoolean()
+  active?: boolean;
 }

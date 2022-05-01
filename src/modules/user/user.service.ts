@@ -50,6 +50,7 @@ export class UserService {
 
     return roleUsers;
   }
+
   async getRoleManagers(): Promise<User[]> {
     const roleManagers = await this.userRepository.find({
       where: { role: UserRoleEnum.MANAGER },
@@ -57,12 +58,21 @@ export class UserService {
 
     return roleManagers;
   }
+
   async getRoleModerators(): Promise<User[]> {
     const roleModeratours = await this.userRepository.find({
       where: { role: UserRoleEnum.MODERATOR },
     });
 
     return roleModeratours;
+  }
+
+  async getDeactivatedUsers(): Promise<User[]> {
+    const deactivatedUsers: User[] = await this.userRepository.find({
+      where: { active: false },
+    });
+
+    return deactivatedUsers;
   }
 
   async updateUser(id: string, dto: UpdateUserDto): Promise<User> {

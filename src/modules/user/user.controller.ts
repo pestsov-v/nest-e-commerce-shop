@@ -12,6 +12,7 @@ import {
 import {
   CHANGE_USER_ROLE,
   DEACTIVATED_USER,
+  DEACTIVATED_USER_MESSAGE,
   DELETED_USER,
   REACTIVATED_USER,
   UPDATE_USER,
@@ -31,6 +32,7 @@ import { UpdateUserDto } from './dto/updateUser.dto';
 import { UpdateUserResponse } from './response/updateUser.response';
 import { statusEnum } from '../../core/status.enum';
 import { DeleteUserResponse } from './response/deleteUser.response';
+import { DeactivatedUsersResponse } from './response/deactivatedUsers.response';
 
 @Controller('user')
 export class UserController {
@@ -38,7 +40,7 @@ export class UserController {
 
   @Post()
   async signup(@Body() dto: CreateUserDto): Promise<UserGetResponse> {
-    const user = await this.userService.createUser(dto);
+    const user: User = await this.userService.createUser(dto);
 
     return {
       status: statusEnum.SUCCESS,
@@ -48,7 +50,7 @@ export class UserController {
 
   @Get()
   async getUsers(): Promise<UsersGetResponse> {
-    const users = await this.userService.getUsers();
+    const users: User[] = await this.userService.getUsers();
 
     return {
       status: statusEnum.SUCCESS,
@@ -61,7 +63,7 @@ export class UserController {
 
   @Get('users')
   async getRoleUsers(): Promise<getRoleResponse> {
-    const users = await this.userService.getRoleUsers();
+    const users: User[] = await this.userService.getRoleUsers();
 
     return {
       status: statusEnum.SUCCESS,
@@ -74,7 +76,7 @@ export class UserController {
 
   @Get('managers')
   async getRoleManagers(): Promise<getRoleResponse> {
-    const users = await this.userService.getRoleManagers();
+    const users: User[] = await this.userService.getRoleManagers();
 
     return {
       status: statusEnum.SUCCESS,
@@ -87,7 +89,7 @@ export class UserController {
 
   @Get('moderators')
   async getRoleModerators(): Promise<getRoleResponse> {
-    const users = await this.userService.getRoleModerators();
+    const users: User[] = await this.userService.getRoleModerators();
 
     return {
       status: statusEnum.SUCCESS,
@@ -98,9 +100,22 @@ export class UserController {
     };
   }
 
+  @Get('deactivated-users')
+  async getDeactivatedUsers(): Promise<DeactivatedUsersResponse> {
+    const users: User[] = await this.userService.getDeactivatedUsers();
+
+    return {
+      status: statusEnum.SUCCESS,
+      amount: DEACTIVATED_USER_MESSAGE(users.length),
+      data: {
+        data: users,
+      },
+    };
+  }
+
   @Get(':id')
   async getUser(@Param() id: string): Promise<UserGetResponse> {
-    const user = await this.userService.getUser(id);
+    const user: User = await this.userService.getUser(id);
 
     return {
       status: statusEnum.SUCCESS,
@@ -113,7 +128,7 @@ export class UserController {
     @Param() id: string,
     @Body() dto: UpdateUserDto,
   ): Promise<UpdateUserResponse> {
-    const user = await this.userService.updateUser(id, dto);
+    const user: User = await this.userService.updateUser(id, dto);
 
     return {
       status: statusEnum.SUCCESS,
@@ -124,7 +139,7 @@ export class UserController {
 
   @Patch(':id/deactivated')
   async deactivatedUser(@Param() id: string): Promise<DeactivatedResponse> {
-    const user = await this.userService.deactivateUser(id);
+    const user: User = await this.userService.deactivateUser(id);
 
     return {
       status: statusEnum.SUCCESS,

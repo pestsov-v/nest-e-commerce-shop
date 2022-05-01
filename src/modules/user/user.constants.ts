@@ -28,3 +28,7 @@ export const REACTIVATED_USER = 'Пользователь успешно вос�
 export const CHANGE_USER_ROLE = (role) => {
   return `Пользователю теперь принадлежит роль: ${role}`;
 };
+
+export const DEACTIVATED_USER_MESSAGE = (amount) => {
+  return `Количество деактивированных пользователей: ${amount}`;
+};

@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { CreateUserDto } from './dto/create.user.dto';
+import { CreateUserDto } from './dto/createUser.dto';
 import { genSalt, hash } from 'bcryptjs';
 import { USER_NOT_FOUND, USERS_LIST_EMPTY } from './user.constants';
 import { UserRoleEnum } from './user-role.enum';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class UserService {
@@ -26,7 +27,7 @@ export class UserService {
     return user;
   }
 
-  async getUsers() {
+  async getUsers(): Promise<User[]> {
     const users = this.userRepository.find();
 
     if (!users) throw new HttpException(USERS_LIST_EMPTY, HttpStatus.NOT_FOUND);
@@ -42,7 +43,41 @@ export class UserService {
     return user;
   }
 
-  async deactivateUser(id: string) {
+  async getRoleUsers(): Promise<User[]> {
+    const roleUsers: User[] = await this.userRepository.find({
+      where: { role: UserRoleEnum.USER },
+    });
+
+    return roleUsers;
+  }
+  async getRoleManagers(): Promise<User[]> {
+    const roleManagers = await this.userRepository.find({
+      where: { role: UserRoleEnum.MANAGER },
+    });
+
+    return roleManagers;
+  }
+  async getRoleModerators(): Promise<User[]> {
+    const roleModeratours = await this.userRepository.find({
+      where: { role: UserRoleEnum.MODERATOR },
+    });
+
+    return roleModeratours;
+  }
+
+  async updateUser(id: string, dto: UpdateUserDto): Promise<User> {
+    const user: User = await this.getUser(id);
+
+    if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+
+    user.firstName = dto.firstName;
+    user.lastName = dto.lastName;
+    user.email = dto.email;
+
+    return this.userRepository.save(user);
+  }
+
+  async deactivateUser(id: string): Promise<User> {
     const user = await this.getUser(id);
 
     if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -52,7 +87,7 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  async reactivateUser(id: string) {
+  async reactivateUser(id: string): Promise<User> {
     const user = await this.getUser(id);
 
     if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -72,25 +107,11 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  async getRoleUsers(): Promise<User[]> {
-    const roleUsers: User[] = await this.userRepository.find({
-      where: { role: UserRoleEnum.USER },
-    });
+  async deleteUser(id: string): Promise<User> {
+    const user = await this.getUser(id);
 
-    return roleUsers;
-  }
-  async getRoleManagers(): Promise<User[]> {
-    const roleManagers = await this.userRepository.find({
-      where: { role: UserRoleEnum.MANAGER },
-    });
+    if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-    return roleManagers;
-  }
-  async getRoleModerators() {
-    const roleModeratours = await this.userRepository.find({
-      where: { role: UserRoleEnum.MODERATOR },
-    });
-
-    return roleModeratours;
+    return await this.userRepository.remove(user);
   }
 }

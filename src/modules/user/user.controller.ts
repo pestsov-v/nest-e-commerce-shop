@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -8,7 +9,15 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create.user.dto';
+import {
+  CHANGE_USER_ROLE,
+  DEACTIVATED_USER,
+  DELETED_USER,
+  REACTIVATED_USER,
+  UPDATE_USER,
+  USER_ROLE_NOT_EXISTS,
+} from './user.constants';
+import { CreateUserDto } from './dto/createUser.dto';
 import { UserService } from './user.service';
 import { UsersGetResponse } from './response/users.get.response';
 import { UserGetResponse } from './response/user.get.response';
@@ -16,9 +25,12 @@ import { ChangeUserRoleDto } from './dto/changeUserRole.dto';
 import { ReactivatedResponse } from './response/reactivated.response';
 import { User } from './user.entity';
 import { DeactivatedResponse } from './response/deactivated.response';
-import { USER_ROLE_NOT_EXISTS } from './user.constants';
 import { ChangeUserRoleResponse } from './response/changeUserRole.response';
 import { getRoleResponse } from './response/getRole.response';
+import { UpdateUserDto } from './dto/updateUser.dto';
+import { UpdateUserResponse } from './response/updateUser.response';
+import { statusEnum } from '../../core/status.enum';
+import { DeleteUserResponse } from './response/deleteUser.response';
 
 @Controller('user')
 export class UserController {
@@ -29,7 +41,7 @@ export class UserController {
     const user = await this.userService.createUser(dto);
 
     return {
-      status: 'success',
+      status: statusEnum.SUCCESS,
       data: user,
     };
   }
@@ -39,7 +51,7 @@ export class UserController {
     const users = await this.userService.getUsers();
 
     return {
-      status: 'success',
+      status: statusEnum.SUCCESS,
       amount: users.length,
       data: {
         data: users,
@@ -52,7 +64,7 @@ export class UserController {
     const users = await this.userService.getRoleUsers();
 
     return {
-      status: 'success',
+      status: statusEnum.SUCCESS,
       amount: users.length,
       data: {
         data: users,
@@ -60,15 +72,12 @@ export class UserController {
     };
   }
 
-  // MANAGER = 'manager',
-  // MODERATOR = 'moderator',
-
   @Get('managers')
   async getRoleManagers(): Promise<getRoleResponse> {
     const users = await this.userService.getRoleManagers();
 
     return {
-      status: 'success',
+      status: statusEnum.SUCCESS,
       amount: users.length,
       data: {
         data: users,
@@ -81,7 +90,7 @@ export class UserController {
     const users = await this.userService.getRoleModerators();
 
     return {
-      status: 'success',
+      status: statusEnum.SUCCESS,
       amount: users.length,
       data: {
         data: users,
@@ -94,7 +103,21 @@ export class UserController {
     const user = await this.userService.getUser(id);
 
     return {
-      status: 'success',
+      status: statusEnum.SUCCESS,
+      data: user,
+    };
+  }
+
+  @Patch(':id')
+  async updateUser(
+    @Param() id: string,
+    @Body() dto: UpdateUserDto,
+  ): Promise<UpdateUserResponse> {
+    const user = await this.userService.updateUser(id, dto);
+
+    return {
+      status: statusEnum.SUCCESS,
+      message: UPDATE_USER,
       data: user,
     };
   }
@@ -104,8 +127,8 @@ export class UserController {
     const user = await this.userService.deactivateUser(id);
 
     return {
-      status: 'success',
-      message: 'Пользователь успешно деактивирован',
+      status: statusEnum.SUCCESS,
+      message: DEACTIVATED_USER,
       data: user,
     };
   }
@@ -115,8 +138,8 @@ export class UserController {
     const user: User = await this.userService.reactivateUser(id);
 
     return {
-      status: 'success',
-      message: 'Пользователь успешно восстановлен',
+      status: statusEnum.SUCCESS,
+      message: REACTIVATED_USER,
       data: user,
     };
   }
@@ -129,12 +152,28 @@ export class UserController {
     if (!dto.role)
       throw new HttpException(USER_ROLE_NOT_EXISTS, HttpStatus.CONFLICT);
 
-    const updateUser = await this.userService.changeUserRole(id, dto.role);
+    const updateUser: User = await this.userService.changeUserRole(
+      id,
+      dto.role,
+    );
 
     return {
-      status: 'success',
-      message: `Пользователю теперь принадлежит роль: ${updateUser.role}`,
+      status: statusEnum.SUCCESS,
+      message: CHANGE_USER_ROLE(updateUser.role),
       data: updateUser,
+    };
+  }
+
+  @Delete()
+  async deleteUser(@Param() id: string): Promise<DeleteUserResponse> {
+    const user: User = await this.userService.deleteUser(id);
+
+    return {
+      status: statusEnum.SUCCESS,
+      message: DELETED_USER,
+      data: {
+        deletedUser: user,
+      },
     };
   }
 }

@@ -17,7 +17,8 @@ import { ReactivatedResponse } from './response/reactivated.response';
 import { User } from './user.entity';
 import { DeactivatedResponse } from './response/deactivated.response';
 import { USER_ROLE_NOT_EXISTS } from './user.constants';
-import { ChangeUserRoleResponse } from "./response/changeUserRole.response";
+import { ChangeUserRoleResponse } from './response/changeUserRole.response';
+import { getRoleResponse } from './response/getRole.response';
 
 @Controller('user')
 export class UserController {
@@ -36,6 +37,48 @@ export class UserController {
   @Get()
   async getUsers(): Promise<UsersGetResponse> {
     const users = await this.userService.getUsers();
+
+    return {
+      status: 'success',
+      amount: users.length,
+      data: {
+        data: users,
+      },
+    };
+  }
+
+  @Get('users')
+  async getRoleUsers(): Promise<getRoleResponse> {
+    const users = await this.userService.getRoleUsers();
+
+    return {
+      status: 'success',
+      amount: users.length,
+      data: {
+        data: users,
+      },
+    };
+  }
+
+  // MANAGER = 'manager',
+  // MODERATOR = 'moderator',
+
+  @Get('managers')
+  async getRoleManagers(): Promise<getRoleResponse> {
+    const users = await this.userService.getRoleManagers();
+
+    return {
+      status: 'success',
+      amount: users.length,
+      data: {
+        data: users,
+      },
+    };
+  }
+
+  @Get('moderators')
+  async getRoleModerators(): Promise<getRoleResponse> {
+    const users = await this.userService.getRoleModerators();
 
     return {
       status: 'success',
@@ -70,6 +113,7 @@ export class UserController {
   @Patch(':id/reactivated')
   async reactivatedUser(id: string): Promise<ReactivatedResponse> {
     const user: User = await this.userService.reactivateUser(id);
+
     return {
       status: 'success',
       message: 'Пользователь успешно восстановлен',
@@ -78,7 +122,10 @@ export class UserController {
   }
 
   @Patch(':id/role')
-  async changeUserRole(@Param() id: string, @Body() dto: ChangeUserRoleDto): Promise<ChangeUserRoleResponse> {
+  async changeUserRole(
+    @Param() id: string,
+    @Body() dto: ChangeUserRoleDto,
+  ): Promise<ChangeUserRoleResponse> {
     if (!dto.role)
       throw new HttpException(USER_ROLE_NOT_EXISTS, HttpStatus.CONFLICT);
 

@@ -6,7 +6,6 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/create.user.dto';
 import { genSalt, hash } from 'bcryptjs';
 import { USER_NOT_FOUND, USERS_LIST_EMPTY } from './user.constants';
-import { UserGetResponse } from './response/user.get.response';
 import { UserRoleEnum } from './user-role.enum';
 
 @Injectable()
@@ -71,5 +70,27 @@ export class UserService {
     user.role = role;
 
     return await this.userRepository.save(user);
+  }
+
+  async getRoleUsers(): Promise<User[]> {
+    const roleUsers: User[] = await this.userRepository.find({
+      where: { role: UserRoleEnum.USER },
+    });
+
+    return roleUsers;
+  }
+  async getRoleManagers(): Promise<User[]> {
+    const roleManagers = await this.userRepository.find({
+      where: { role: UserRoleEnum.MANAGER },
+    });
+
+    return roleManagers;
+  }
+  async getRoleModerators() {
+    const roleModeratours = await this.userRepository.find({
+      where: { role: UserRoleEnum.MODERATOR },
+    });
+
+    return roleModeratours;
   }
 }

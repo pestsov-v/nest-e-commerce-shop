@@ -49,8 +49,12 @@ export class AuthService {
     return tokens;
   }
 
-  async localLogout() {
+  async localLogout(userId: string) {
+    const user = await this.userRepository.findOne(userId);
 
+    user.hashedRefreshToken = 'null';
+
+    await this.userRepository.save(user);
   }
 
   localRefreshToken() {}

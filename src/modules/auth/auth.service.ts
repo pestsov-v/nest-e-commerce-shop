@@ -9,8 +9,13 @@ import { JwtService } from '@nestjs/jwt';
 import { Tokens } from './type/tokens.type';
 import { USER_NOT_FOUND } from '../user/user.constants';
 import { compare } from 'bcryptjs';
-import { PASSWORD_NOT_MATCHED, REFRESH_TOKEN_NOT_MATCHED } from "./auth.constants";
+import {
+  PASSWORD_NOT_MATCHED,
+  REFRESH_TOKEN_NOT_MATCHED,
+} from './auth.constants';
 import { SigninDto } from './dto/signin.dto';
+import { statusEnum } from "../../core/enum/status.enum";
+import { UserRoleEnum } from "../user/user-role.enum";
 
 @Injectable()
 export class AuthService {
@@ -27,7 +32,7 @@ export class AuthService {
       lastName: dto.lastName,
       password: await this.authHelper.hashData(dto.password),
     });
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.role);
     await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
     return tokens;
   }
@@ -38,13 +43,12 @@ export class AuthService {
     });
 
     if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-
     const passwordMatches = await compare(dto.password, user.password);
 
     if (!passwordMatches)
       throw new HttpException(PASSWORD_NOT_MATCHED, HttpStatus.NOT_FOUND);
 
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.role);
     await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
     return tokens;
   }
@@ -67,7 +71,7 @@ export class AuthService {
     if (!refreshTokenMatches)
       throw new HttpException(REFRESH_TOKEN_NOT_MATCHED, HttpStatus.NOT_FOUND);
 
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.role);
     await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
     return tokens;
   }
@@ -80,12 +84,13 @@ export class AuthService {
     return this.userRepository.save(user);
   }
 
-  async getTokens(userId: string, email: string) {
+  async getTokens(userId: string, email: string, role: UserRoleEnum) {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub: userId,
           email,
+          role,
         },
         {
           secret: 'access-token-secret',
@@ -97,6 +102,7 @@ export class AuthService {
         {
           sub: userId,
           email,
+          role,
         },
         {
           secret: 'refresh-token-secret',

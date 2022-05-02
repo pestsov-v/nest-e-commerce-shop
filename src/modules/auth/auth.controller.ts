@@ -41,7 +41,9 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt-refresh'))
   @HttpCode(HttpStatus.OK)
   @Post('local/refresh')
-  async localRefreshToken() {
-    const refreshToken = await this.authSevice.localRefreshToken();
+  async localRefreshToken(@Req() req: Request) {
+    const userId = req.user['sub'];
+    const refreshToken = req.user['refreshToken'];
+    return this.authSevice.localRefreshToken(userId, refreshToken);
   }
 }

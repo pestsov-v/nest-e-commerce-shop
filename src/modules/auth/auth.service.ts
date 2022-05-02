@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Tokens } from './type/tokens.type';
 import { USER_NOT_FOUND } from '../user/user.constants';
 import { compare } from 'bcryptjs';
-import { PASSWORD_NOT_MATCHED } from './auth.constants';
+import { PASSWORD_NOT_MATCHED, REFRESH_TOKEN_NOT_MATCHED } from "./auth.constants";
 import { SigninDto } from './dto/signin.dto';
 
 @Injectable()
@@ -57,7 +57,20 @@ export class AuthService {
     await this.userRepository.save(user);
   }
 
-  localRefreshToken() {}
+  async localRefreshToken(userId: string, refreshToken: string) {
+    const user = await this.userRepository.findOne(userId);
+
+    if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+
+    const refreshTokenMatches = compare(refreshToken, user.hashedRefreshToken);
+
+    if (!refreshTokenMatches)
+      throw new HttpException(REFRESH_TOKEN_NOT_MATCHED, HttpStatus.NOT_FOUND);
+
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
+    return tokens;
+  }
 
   async updateRefreshTokenHash(userId: string, refreshToken: string) {
     const hash = await this.authHelper.hashData(refreshToken);

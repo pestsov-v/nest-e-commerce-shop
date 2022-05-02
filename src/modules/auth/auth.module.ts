@@ -8,10 +8,14 @@ import { User } from '../user/user.entity';
 import { AuthHelper } from './auth.helper';
 import { AccessTokenStrategy } from './strategy/accessToken.strategy';
 import { RefreshTokenStrategy } from './strategy/refreshToken.strategy';
-import { JwtModule } from "@nestjs/jwt";
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [JwtModule.register({}), ConfigModule, TypeOrmModule.forFeature([UserRepository, User])],
+  imports: [
+    JwtModule.register({}),
+    ConfigModule,
+    TypeOrmModule.forFeature([UserRepository, User]),
+  ],
   controllers: [AuthController],
   providers: [
     AuthService,

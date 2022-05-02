@@ -17,4 +17,6 @@ export class User {
   active: boolean;
   @Column({ default: UserRoleEnum.USER })
   role: UserRoleEnum;
+  @Column({ default: Date.now() })
+  hashedRefreshToken: string;
 }

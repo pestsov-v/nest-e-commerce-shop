@@ -7,4 +7,6 @@ export class UpdateUserDto {
   lastName?: string;
   @IsString()
   email?: string;
+  @IsString()
+  hashedRefreshToken?: string;
 }

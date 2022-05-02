@@ -4,46 +4,49 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
 import { Tokens } from './type/tokens.type';
 import { SigninDto } from './dto/signin.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
+import { RefreshTokenGuard } from '../../core/guard/refreshToken.guard';
+import { GetCurrentUser } from '../../core/decorator/getCurrentUser.decorator';
+import { GetCurrentUserId } from '../../core/decorator/getCurrentUserId.decorator';
+import { Public } from '../../core/decorator/public.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authSevice: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post('local/signup')
   async localSignup(@Body() dto: SignupDto): Promise<Tokens> {
-    return await this.authSevice.localSignup(dto);
+    return await this.authService.localSignup(dto);
   }
 
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('local/signin')
   async localSignin(@Body() dto: SigninDto): Promise<Tokens> {
-    return await this.authSevice.localSignin(dto);
+    return await this.authService.localSignin(dto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   @Post('local/logout')
-  async localLogout(@Req() req: Request) {
-    const userId = req.user['sub'];
-    return await this.authSevice.localLogout(userId);
+  async localLogout(@GetCurrentUserId() userId: string) {
+    return await this.authService.localLogout(userId);
   }
 
-  @UseGuards(AuthGuard('jwt-refresh'))
+  @Public()
+  @UseGuards(RefreshTokenGuard)
   @HttpCode(HttpStatus.OK)
   @Post('local/refresh')
-  async localRefreshToken(@Req() req: Request) {
-    const userId = req.user['sub'];
-    const refreshToken = req.user['refreshToken'];
-    return this.authSevice.localRefreshToken(userId, refreshToken);
+  async localRefreshToken(
+    @GetCurrentUserId() userId: string,
+    @GetCurrentUser('refreshToken') refreshToken: string,
+  ) {
+    return this.authService.localRefreshToken(userId, refreshToken);
   }
 }

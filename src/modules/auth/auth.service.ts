@@ -27,7 +27,7 @@ export class AuthService {
     @InjectRepository(UserRepository) private userRepository: Repository<User>,
   ) {}
 
-  async localSignup(dto: SignupDto): Promise<SignupResponse> {
+  async localSignup(dto: SignupDto): Promise<User> {
     const user: User = await this.userRepository.save({
       email: dto.email,
       firstName: dto.firstName,
@@ -35,57 +35,39 @@ export class AuthService {
       password: await this.authHelper.hashData(dto.password),
     });
 
-    const tokens: Tokens = await this.setTokens(user.id, user.email, user.role);
-
-    return {
-      status: statusEnum.SUCCESS,
-      message: SIGNUP_SUCCESS,
-      data: {
-        tokens,
-        user,
-      },
-    };
+    if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+    return user;
   }
 
-  async localSignin(dto: SigninDto): Promise<Tokens> {
+  async localSignin(dto: SigninDto): Promise<User> {
     const user: User = await this.userRepository.findOne({
       where: { email: dto.email },
     });
 
     if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-    const passwordMatches = compare(dto.password, user.password);
-
-    if (!passwordMatches)
-      throw new HttpException(PASSWORD_NOT_MATCHED, HttpStatus.NOT_FOUND);
-
-    const tokens: Tokens = await this.setTokens(user.id, user.email, user.role);
-
-    return tokens;
+    await this.authHelper.comparePassword(dto.password, user.password);
+    return user;
   }
 
-  async localLogout(userId: string): Promise<void> {
+  async localLogout(userId: string): Promise<User> {
     const user = await this.userRepository.findOne(userId);
-    user.hashedRefreshToken = 'null';
-
-    await this.userRepository.save(user);
-  }
-
-  async localRefreshToken(
-    userId: string,
-    refreshToken: string,
-  ): Promise<Tokens> {
-    const user: User = await this.userRepository.findOne(userId);
 
     if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-    const refreshTokenMatches = compare(refreshToken, user.hashedRefreshToken);
+    user.hashedRefreshToken = 'null';
 
-    if (!refreshTokenMatches)
-      throw new HttpException(REFRESH_TOKEN_NOT_MATCHED, HttpStatus.NOT_FOUND);
+    await this.userRepository.save(user);
 
-    const tokens: Tokens = await this.setTokens(user.id, user.email, user.role);
-    return tokens;
+    return user;
+  }
+
+  async localRefreshToken(userId: string, refreshToken: string): Promise<User> {
+    const user: User = await this.userRepository.findOne(userId);
+    if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+
+    await this.authHelper.compareTokens(refreshToken, user.hashedRefreshToken);
+    return user;
   }
 
   async updateRefreshTokenHash(

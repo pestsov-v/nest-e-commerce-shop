@@ -9,7 +9,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './core/guard/accessToken.guard';
-import { RolesGuard } from "./core/guard/roles.guard";
+import { RolesGuard } from './core/guard/roles.guard';
 
 @Module({
   imports: [

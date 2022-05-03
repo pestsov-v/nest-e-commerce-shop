@@ -12,10 +12,12 @@ import { compare } from 'bcryptjs';
 import {
   PASSWORD_NOT_MATCHED,
   REFRESH_TOKEN_NOT_MATCHED,
+  SIGNUP_SUCCESS,
 } from './auth.constants';
 import { SigninDto } from './dto/signin.dto';
-import { statusEnum } from "../../core/enum/status.enum";
-import { UserRoleEnum } from "../user/user-role.enum";
+import { Role } from '../user/user-role.enum';
+import { SignupResponse } from './response/signup.response';
+import { statusEnum } from '../../core/enum/status.enum';
 
 @Injectable()
 export class AuthService {
@@ -25,44 +27,55 @@ export class AuthService {
     @InjectRepository(UserRepository) private userRepository: Repository<User>,
   ) {}
 
-  async localSignup(dto: SignupDto): Promise<Tokens> {
-    const user = await this.userRepository.save({
+  async localSignup(dto: SignupDto): Promise<SignupResponse> {
+    const user: User = await this.userRepository.save({
       email: dto.email,
       firstName: dto.firstName,
       lastName: dto.lastName,
       password: await this.authHelper.hashData(dto.password),
     });
-    const tokens = await this.getTokens(user.id, user.email, user.role);
-    await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
-    return tokens;
+
+    const tokens: Tokens = await this.setTokens(user.id, user.email, user.role);
+
+    return {
+      status: statusEnum.SUCCESS,
+      message: SIGNUP_SUCCESS,
+      data: {
+        tokens,
+        user,
+      },
+    };
   }
 
   async localSignin(dto: SigninDto): Promise<Tokens> {
-    const user = await this.userRepository.findOne({
+    const user: User = await this.userRepository.findOne({
       where: { email: dto.email },
     });
 
     if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-    const passwordMatches = await compare(dto.password, user.password);
+
+    const passwordMatches = compare(dto.password, user.password);
 
     if (!passwordMatches)
       throw new HttpException(PASSWORD_NOT_MATCHED, HttpStatus.NOT_FOUND);
 
-    const tokens = await this.getTokens(user.id, user.email, user.role);
-    await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
+    const tokens: Tokens = await this.setTokens(user.id, user.email, user.role);
+
     return tokens;
   }
 
-  async localLogout(userId: string) {
+  async localLogout(userId: string): Promise<void> {
     const user = await this.userRepository.findOne(userId);
-
     user.hashedRefreshToken = 'null';
 
     await this.userRepository.save(user);
   }
 
-  async localRefreshToken(userId: string, refreshToken: string) {
-    const user = await this.userRepository.findOne(userId);
+  async localRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ): Promise<Tokens> {
+    const user: User = await this.userRepository.findOne(userId);
 
     if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
@@ -71,20 +84,28 @@ export class AuthService {
     if (!refreshTokenMatches)
       throw new HttpException(REFRESH_TOKEN_NOT_MATCHED, HttpStatus.NOT_FOUND);
 
-    const tokens = await this.getTokens(user.id, user.email, user.role);
-    await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
+    const tokens: Tokens = await this.setTokens(user.id, user.email, user.role);
     return tokens;
   }
 
-  async updateRefreshTokenHash(userId: string, refreshToken: string) {
+  async updateRefreshTokenHash(
+    userId: string,
+    refreshToken: string,
+  ): Promise<User> {
     const hash = await this.authHelper.hashData(refreshToken);
 
-    const user = await this.userRepository.findOne(userId);
+    const user: User = await this.userRepository.findOne(userId);
     user.hashedRefreshToken = hash;
     return this.userRepository.save(user);
   }
 
-  async getTokens(userId: string, email: string, role: UserRoleEnum) {
+  async setTokens(id: string, email: string, role: Role): Promise<Tokens> {
+    const tokens: Tokens = await this.getTokens(id, email, role);
+    await this.updateRefreshTokenHash(id, tokens.refreshToken);
+    return tokens;
+  }
+
+  async getTokens(userId: string, email: string, role: Role) {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {

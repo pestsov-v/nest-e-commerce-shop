@@ -22,7 +22,7 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post('local/signup')
-  async localSignup(@Body() dto: SignupDto): Promise<Tokens> {
+  async localSignup(@Body() dto: SignupDto) {
     return await this.authService.localSignup(dto);
   }
 

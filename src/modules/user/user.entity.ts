@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { UserRoleEnum } from './user-role.enum';
+import { Role } from './user-role.enum';
 
 @Entity('user')
 export class User {
@@ -15,8 +15,8 @@ export class User {
   password: string;
   @Column({ default: true })
   active: boolean;
-  @Column({ type: 'enum', enum: UserRoleEnum, default: UserRoleEnum.USER })
-  role: UserRoleEnum;
+  @Column({ type: 'enum', enum: Role, default: Role.USER })
+  role: Role;
   @Column({ default: Date.now() })
   hashedRefreshToken: string;
 }

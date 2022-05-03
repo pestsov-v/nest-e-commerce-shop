@@ -6,7 +6,7 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/createUser.dto';
 import { genSalt, hash } from 'bcryptjs';
 import { USER_NOT_FOUND, USERS_LIST_EMPTY } from './user.constants';
-import { UserRoleEnum } from './user-role.enum';
+import { Role } from './user-role.enum';
 import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
@@ -45,7 +45,7 @@ export class UserService {
 
   async getRoleUsers(): Promise<User[]> {
     const roleUsers: User[] = await this.userRepository.find({
-      where: { role: UserRoleEnum.USER },
+      where: { role: Role.USER },
     });
 
     return roleUsers;
@@ -53,7 +53,7 @@ export class UserService {
 
   async getRoleManagers(): Promise<User[]> {
     const roleManagers = await this.userRepository.find({
-      where: { role: UserRoleEnum.MANAGER },
+      where: { role: Role.MANAGER },
     });
 
     return roleManagers;
@@ -61,7 +61,7 @@ export class UserService {
 
   async getRoleModerators(): Promise<User[]> {
     const roleModeratours = await this.userRepository.find({
-      where: { role: UserRoleEnum.MODERATOR },
+      where: { role: Role.MODERATOR },
     });
 
     return roleModeratours;
@@ -107,7 +107,7 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  async changeUserRole(id: string, role: UserRoleEnum): Promise<User> {
+  async changeUserRole(id: string, role: Role): Promise<User> {
     const user = await this.getUser(id);
 
     if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);

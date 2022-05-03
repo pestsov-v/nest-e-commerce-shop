@@ -6,7 +6,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UserRoleEnum } from '../../modules/user/user-role.enum';
+import { Role } from '../../modules/user/user-role.enum';
 import { ROLES_KEY } from '../decorator/medataKeys.decorators.constants';
 import { ACCESS_DENIED } from './roles.constants';
 
@@ -15,10 +15,10 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext) {
-    const requiredRoles = this.reflector.getAllAndOverride<UserRoleEnum[]>(
-      ROLES_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     if (!requiredRoles) {
       return true;
@@ -30,7 +30,7 @@ export class RolesGuard implements CanActivate {
       throw new HttpException(ACCESS_DENIED, HttpStatus.FORBIDDEN);
     }
 
-    return requiredRoles.some((role: UserRoleEnum) =>
+    return requiredRoles.some((role: Role) =>
       request.user.role?.includes(role),
     );
   }

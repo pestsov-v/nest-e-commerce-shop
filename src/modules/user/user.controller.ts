@@ -8,8 +8,8 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards
-} from "@nestjs/common";
+  UseGuards,
+} from '@nestjs/common';
 import {
   CHANGE_USER_ROLE,
   DEACTIVATED_USER,
@@ -17,26 +17,26 @@ import {
   DELETED_USER,
   REACTIVATED_USER,
   UPDATE_USER,
-  USER_ROLE_NOT_EXISTS
-} from "./user.constants";
-import { CreateUserDto } from "./dto/createUser.dto";
-import { UserService } from "./user.service";
-import { UsersGetResponse } from "./response/users.get.response";
-import { UserGetResponse } from "./response/user.get.response";
-import { ChangeUserRoleDto } from "./dto/changeUserRole.dto";
-import { ReactivatedResponse } from "./response/reactivated.response";
-import { User } from "./user.entity";
-import { DeactivatedResponse } from "./response/deactivated.response";
-import { ChangeUserRoleResponse } from "./response/changeUserRole.response";
-import { getRoleResponse } from "./response/getRole.response";
-import { UpdateUserDto } from "./dto/updateUser.dto";
-import { UpdateUserResponse } from "./response/updateUser.response";
-import { statusEnum } from "../../core/enum/status.enum";
-import { DeleteUserResponse } from "./response/deleteUser.response";
-import { DeactivatedUsersResponse } from "./response/deactivatedUsers.response";
-import { Roles } from "../../core/decorator/roles.decorator";
-import { UserRoleEnum } from "./user-role.enum";
-import { RolesGuard } from "../../core/guard/roles.guard";
+  USER_ROLE_NOT_EXISTS,
+} from './user.constants';
+import { CreateUserDto } from './dto/createUser.dto';
+import { UserService } from './user.service';
+import { UsersGetResponse } from './response/users.get.response';
+import { UserGetResponse } from './response/user.get.response';
+import { ChangeUserRoleDto } from './dto/changeUserRole.dto';
+import { ReactivatedResponse } from './response/reactivated.response';
+import { User } from './user.entity';
+import { DeactivatedResponse } from './response/deactivated.response';
+import { ChangeUserRoleResponse } from './response/changeUserRole.response';
+import { getRoleResponse } from './response/getRole.response';
+import { UpdateUserDto } from './dto/updateUser.dto';
+import { UpdateUserResponse } from './response/updateUser.response';
+import { statusEnum } from '../../core/enum/status.enum';
+import { DeleteUserResponse } from './response/deleteUser.response';
+import { DeactivatedUsersResponse } from './response/deactivatedUsers.response';
+import { Roles } from '../../core/decorator/roles.decorator';
+import { Role } from './user-role.enum';
+import { RolesGuard } from '../../core/guard/roles.guard';
 
 @Controller('user')
 export class UserController {
@@ -52,7 +52,7 @@ export class UserController {
     };
   }
 
-  @Roles(UserRoleEnum.USER)
+  @Roles(Role.USER)
   @UseGuards(RolesGuard)
   @Get()
   async getUsers(): Promise<UsersGetResponse> {

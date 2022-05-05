@@ -124,4 +124,16 @@ export class UserService {
 
     return await this.userRepository.remove(user);
   }
+
+  async updateUserImage(userId: string, image: string) {
+    const user: User = await this.getUser(userId);
+    user.userId = userId;
+    user.image = image;
+    return await this.userRepository.save(user);
+  }
+  async findImageNameByUser(userId: string) {
+    const user: User = await this.getUser(userId);
+    const image = user.image;
+    return image;
+  }
 }

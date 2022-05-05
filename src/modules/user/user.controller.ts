@@ -8,7 +8,10 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
+  Session as GetSession,
 } from '@nestjs/common';
 import {
   CHANGE_USER_ROLE,
@@ -40,7 +43,9 @@ import { RolesGuard } from '../../core/guard/roles.guard';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService
+  ) {}
 
   @Post()
   async signup(@Body() dto: CreateUserDto): Promise<UserGetResponse> {

@@ -1,4 +1,4 @@
 export class FileResponse {
-  url: string;
-  name: string;
+    url: string;
+    name: string;
 }

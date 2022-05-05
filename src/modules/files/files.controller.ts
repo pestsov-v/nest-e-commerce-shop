@@ -8,13 +8,13 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FilesService } from './files.service';
 import {
   FileFieldsInterceptor,
   FileInterceptor,
 } from '@nestjs/platform-express';
-import { fileIdDto } from './dto/fileId.dto';
 import { FILE_DELETE_SUCCESS } from './files.constants';
+import { FilesService } from './files.service';
+import { fileIdDto } from './dto/fileId.dto';
 import { statusEnum } from '../../core/enum/status.enum';
 import { DeleteDto } from './dto/delete.dto';
 

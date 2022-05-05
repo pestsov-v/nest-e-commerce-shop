@@ -1,11 +1,11 @@
-import { HttpCode, HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
 import { path } from 'app-root-path';
 import { ensureDir, writeFile } from 'fs-extra';
-import { FILE_NOT_FOUND, projectName } from "./files.constants";
+import { projectName } from './files.constants';
 import { FileResponse } from './response/file.response';
 import { fileIdDto } from './dto/fileId.dto';
 import * as fs from 'fs';
-import { format } from "date-fns";
+import { format } from 'date-fns';
 
 @Injectable()
 export class FilesService {
@@ -13,7 +13,7 @@ export class FilesService {
     dwg: Express.Multer.File[],
     dwgId: fileIdDto,
   ): Promise<FileResponse[]> {
-    const mimeType = dwg[0].mimetype.split('.')[1]
+    const mimeType = dwg[0].mimetype.split('.')[1];
     const dwgName: string = projectName(dwgId.id);
     const uploadProject = `${path}/objects/${dwgName}`;
 
@@ -63,7 +63,6 @@ export class FilesService {
     const uploadProject = `${path}/objects/${pdfName}`;
     await ensureDir(uploadProject);
 
-
     const response = await Promise.all(
       pdf.map(async (p) => {
         await writeFile(`${uploadProject}/${pdfName}.${mimeType}`, p.buffer);
@@ -84,7 +83,7 @@ export class FilesService {
 
     fs.unlink(uploadProject, (err) => {
       if (err) {
-        return
+        return;
       }
     });
   }
@@ -94,10 +93,9 @@ export class FilesService {
     const year = format(new Date(), 'yyyy');
     const uploadProject = `${path}/objects/${pdfName}/О-${pdfId.id}-${year}.pdf`;
 
-    console.log(uploadProject)
     fs.unlink(uploadProject, (err) => {
       if (err) {
-        return
+        return;
       }
     });
   }
@@ -109,7 +107,7 @@ export class FilesService {
 
     fs.unlink(uploadProject, (err) => {
       if (err) {
-        return
+        return;
       }
     });
   }

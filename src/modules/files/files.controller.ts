@@ -1,5 +1,7 @@
 import {
   Controller,
+  Delete,
+  HttpCode,
   Param,
   Post,
   UploadedFile,
@@ -12,6 +14,9 @@ import {
   FileInterceptor,
 } from '@nestjs/platform-express';
 import { fileIdDto } from './dto/fileId.dto';
+import { FILE_DELETE_SUCCESS } from './files.constants';
+import { statusEnum } from '../../core/enum/status.enum';
+import { DeleteDto } from './dto/delete.dto';
 
 @Controller('files')
 export class FilesController {
@@ -41,7 +46,6 @@ export class FilesController {
     @UploadedFile() pdf: Express.Multer.File,
     @Param() pdfId: fileIdDto,
   ) {
-    console.log(pdf);
     return this.fileService.saveProjectPDF([pdf], pdfId);
   }
 
@@ -78,5 +82,38 @@ export class FilesController {
     const object = { dwg, pdf, spec };
 
     return object;
+  }
+
+  @HttpCode(200)
+  @Delete('dwg/:id')
+  async deleteProjectDWG(@Param() dwgId: fileIdDto): Promise<DeleteDto> {
+    await this.fileService.deleteProjectDWG(dwgId);
+
+    return {
+      status: statusEnum.SUCCESS,
+      message: FILE_DELETE_SUCCESS,
+    };
+  }
+
+  @HttpCode(200)
+  @Delete('pdf/:id')
+  async deleteProjectPDF(@Param() pdfId: fileIdDto): Promise<DeleteDto> {
+    await this.fileService.deleteProjectPDF(pdfId);
+
+    return {
+      status: statusEnum.SUCCESS,
+      message: FILE_DELETE_SUCCESS,
+    };
+  }
+
+  @HttpCode(200)
+  @Delete('xlsx/:id')
+  async deleteProjectSpec(@Param() xlsxId: fileIdDto): Promise<DeleteDto> {
+    await this.fileService.deleteProjectSpec(xlsxId);
+
+    return {
+      status: statusEnum.SUCCESS,
+      message: FILE_DELETE_SUCCESS,
+    };
   }
 }

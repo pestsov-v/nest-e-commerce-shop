@@ -11,6 +11,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './core/guard/accessToken.guard';
 import { RolesGuard } from './core/guard/roles.guard';
 import { SessionModule } from './modules/session/session.module';
+import { FilesModule } from './modules/files/files.module';
 
 @Module({
   imports: [
@@ -20,15 +21,16 @@ import { SessionModule } from './modules/session/session.module';
     UserModule,
     AuthModule,
     SessionModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
     RolesGuard,
-    {
-      provide: APP_GUARD,
-      useClass: AccessTokenGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AccessTokenGuard,
+    // },
   ],
 })
 export class AppModule {}

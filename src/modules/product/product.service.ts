@@ -32,7 +32,6 @@ export class ProductService {
 
   async getProduct(id: string): Promise<Product> {
     const product: Product = await this.productRepository.findOne(id);
-
     if (!product) {
       throw new HttpException(NOT_FOUND_PRODUCT, HttpStatus.NOT_FOUND);
     }

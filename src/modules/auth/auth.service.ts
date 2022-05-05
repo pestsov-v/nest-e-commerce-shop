@@ -8,16 +8,8 @@ import { AuthHelper } from './auth.helper';
 import { JwtService } from '@nestjs/jwt';
 import { Tokens } from './type/tokens.type';
 import { USER_NOT_FOUND } from '../user/user.constants';
-import { compare } from 'bcryptjs';
-import {
-  PASSWORD_NOT_MATCHED,
-  REFRESH_TOKEN_NOT_MATCHED,
-  SIGNUP_SUCCESS,
-} from './auth.constants';
 import { SigninDto } from './dto/signin.dto';
 import { Role } from '../user/user-role.enum';
-import { SignupResponse } from './response/signup.response';
-import { statusEnum } from '../../core/enum/status.enum';
 
 @Injectable()
 export class AuthService {
@@ -34,6 +26,8 @@ export class AuthService {
       lastName: dto.lastName,
       password: await this.authHelper.hashData(dto.password),
     });
+
+    console.log(user)
 
     if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
     return user;

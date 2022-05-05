@@ -19,8 +19,8 @@ export class UserService {
     const salt = await genSalt(10);
     const user = this.userRepository.save({
       email: dto.email,
-      firstName: dto.firstName,
-      lastName: dto.lastName,
+      first_name: dto.first_name,
+      last_name: dto.last_name,
       password: await hash(dto.password, salt),
     });
 

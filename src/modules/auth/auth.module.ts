@@ -9,6 +9,7 @@ import { AuthHelper } from './auth.helper';
 import { AccessTokenStrategy } from './strategy/accessToken.strategy';
 import { RefreshTokenStrategy } from './strategy/refreshToken.strategy';
 import { JwtModule } from '@nestjs/jwt';
+import { SessionService } from '../session/session.service';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { JwtModule } from '@nestjs/jwt';
     AuthHelper,
     AccessTokenStrategy,
     RefreshTokenStrategy,
+    SessionService,
   ],
 })
 export class AuthModule {}

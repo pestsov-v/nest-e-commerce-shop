@@ -1,0 +1,1 @@
+export const USER_UNAUTHORIZED = 'Вы не вошли в вашу учётную запись'

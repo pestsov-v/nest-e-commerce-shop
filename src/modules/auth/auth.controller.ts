@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Post,
   UseGuards,
+  Session as GetSession,
 } from '@nestjs/common';
 import {
   LOGOUT_SUCCESS,
@@ -26,10 +27,15 @@ import { User } from '../user/user.entity';
 import { SigninResponse } from './response/signin.response';
 import { LogoutResponse } from './response/logout.response';
 import { RefreshTokenResponse } from './response/refreshToken.response';
+import { SessionService } from '../session/session.service';
+import { UserSession } from './type/session.type';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly sessionService: SessionService,
+  ) {}
 
   @Public()
   @HttpCode(HttpStatus.CREATED)
@@ -37,7 +43,7 @@ export class AuthController {
   async localSignup(@Body() dto: SignupDto): Promise<SignupResponse> {
     const user: User = await this.authService.localSignup(dto);
     const tokens: Tokens = await this.authService.setTokens(
-      user.id,
+      user.userId,
       user.email,
       user.role,
     );
@@ -55,14 +61,18 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('local/signin')
-  async localSignin(@Body() dto: SigninDto): Promise<SigninResponse> {
+  async localSignin(
+    @Body() dto: SigninDto,
+    @GetSession() session: UserSession,
+  ): Promise<SigninResponse> {
     const user: User = await this.authService.localSignin(dto);
     const tokens: Tokens = await this.authService.setTokens(
-      user.id,
+      user.userId,
       user.email,
       user.role,
     );
 
+    await this.sessionService.createUserSession(session, user);
     return {
       status: statusEnum.SUCCESS,
       message: SIGNIN_SUCCESS,
@@ -77,6 +87,7 @@ export class AuthController {
   @Post('local/logout')
   async localLogout(
     @GetCurrentUserId() userId: string,
+    @GetSession() session: UserSession,
   ): Promise<LogoutResponse> {
     const user: User = await this.authService.localLogout(userId);
 
@@ -99,7 +110,7 @@ export class AuthController {
   ): Promise<RefreshTokenResponse> {
     const user = await this.authService.localRefreshToken(userId, refreshToken);
     const tokens: Tokens = await this.authService.setTokens(
-      user.id,
+      user.userId,
       user.email,
       user.role,
     );

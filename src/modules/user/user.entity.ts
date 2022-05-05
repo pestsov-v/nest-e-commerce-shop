@@ -1,10 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Role } from './user-role.enum';
 
 @Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
-  id: string;
+  userId: string;
   @Column()
   firstName: string;
   @Column()

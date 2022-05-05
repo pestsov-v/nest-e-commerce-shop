@@ -2,9 +2,9 @@ import { IsString } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
-  firstName: string;
+  first_name: string;
   @IsString()
-  lastName: string;
+  last_name: string;
   @IsString()
   email: string;
   @IsString()

@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { path } from 'app-root-path';
 import { ensureDir, writeFile } from 'fs-extra';
 import { projectName } from './files.constants';
 import { FileResponse } from './response/file.response';
 import { fileIdDto } from './dto/fileId.dto';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import { format } from 'date-fns';
+import { statusEnum } from '../../core/enum/status.enum';
 
 @Injectable()
 export class FilesService {

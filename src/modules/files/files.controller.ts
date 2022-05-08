@@ -1,6 +1,7 @@
 import {
   Controller,
   Delete,
+  Get,
   HttpCode,
   Param,
   Post,
@@ -17,6 +18,7 @@ import { FilesService } from './files.service';
 import { fileIdDto } from './dto/fileId.dto';
 import { statusEnum } from '../../core/enum/status.enum';
 import { DeleteDto } from './dto/delete.dto';
+import { path } from 'app-root-path';
 
 @Controller('files')
 export class FilesController {

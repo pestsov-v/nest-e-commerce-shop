@@ -7,9 +7,10 @@ import {
 } from 'typeorm';
 import { IsNumber, IsString } from 'class-validator';
 import { User } from '../user/user.entity';
+import { BaseEntity } from "../../core/base/base.entity";
 
 @Entity('files')
-export class File {
+export class File extends BaseEntity {
   @PrimaryGeneratedColumn()
   fileId: string;
 

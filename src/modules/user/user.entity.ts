@@ -6,9 +6,10 @@ import {
 } from 'typeorm';
 import { Role } from './user-role.enum';
 import { File } from '../files/file.entity';
+import { BaseEntity } from "../../core/base/base.entity";
 
 @Entity('user')
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   userId: string;
 

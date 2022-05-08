@@ -12,6 +12,7 @@ import { AccessTokenGuard } from './core/guard/accessToken.guard';
 import { RolesGuard } from './core/guard/roles.guard';
 import { SessionModule } from './modules/session/session.module';
 import { FilesModule } from './modules/files/files.module';
+import { OrderModule } from './modules/order/order.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { FilesModule } from './modules/files/files.module';
     AuthModule,
     SessionModule,
     FilesModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [

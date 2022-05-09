@@ -32,6 +32,11 @@ export class LinkController {
     return await this.linkService.getLink(id);
   }
 
+  @Get('user/links/:linkId')
+  async getUserLink(@Param() id: string) {
+    return await this.linkService.getUserLink(id);
+  }
+
   @HttpCode(200)
   @Patch(':linkId')
   async updateLink(@Param() id: string, @Body() dto) {

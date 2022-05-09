@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LinkRepository } from './link.repository';
 import { Repository } from 'typeorm';
 import { Link } from './link.entity';
-import { LINK_NOT_FOUND, LINKS_NOT_FOUND } from './link.constants';
-
+import { LINK_NOT_FOUND, LINKS_NOT_FOUND, USER_LINKS_NOT_FOUND } from "./link.constants";
 
 @Injectable()
 export class LinkService {
@@ -21,6 +20,7 @@ export class LinkService {
 
     return link;
   }
+
   async getLinks() {
     const links = await this.linkRepository.find({
       relations: ['products'],
@@ -30,6 +30,7 @@ export class LinkService {
 
     return links;
   }
+
   async getLink(id) {
     const link = await this.linkRepository.findOne(id);
 
@@ -37,6 +38,17 @@ export class LinkService {
 
     return link;
   }
+
+  async getUserLink(id) {
+    const links = await this.linkRepository.find({
+      user: id,
+    });
+
+    if (!links) throw new HttpException(USER_LINKS_NOT_FOUND, HttpStatus.NOT_FOUND);
+
+    return links
+  }
+
   async updateLink(id, dto) {
     const link = await this.getLink(id);
 
@@ -48,6 +60,7 @@ export class LinkService {
 
     return await this.linkRepository.save(link);
   }
+
   async deleteLink(id) {
     const link = await this.getLink(id);
 

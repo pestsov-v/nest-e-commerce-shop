@@ -14,7 +14,7 @@ export class LinkService {
 
   async createLink(dto) {
     const link = await this.linkRepository.save({
-      code: dto.string,
+      code: dto.code,
       user: dto.userId,
       products: dto.products.id,
     });

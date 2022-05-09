@@ -27,19 +27,19 @@ export class LinkController {
   }
 
   @HttpCode(200)
-  @Get(':id')
+  @Get(':linkId')
   async getLink(@Param() id: string) {
     return await this.linkService.getLink(id);
   }
 
   @HttpCode(200)
-  @Patch(':id')
+  @Patch(':linkId')
   async updateLink(@Param() id: string, @Body() dto) {
     return await this.linkService.updateLink(id, dto);
   }
 
   @HttpCode(200)
-  @Delete(':id')
+  @Delete(':linkId')
   async deleteLink(@Param() id: string) {
     return await this.linkService.deleteLink(id);
   }

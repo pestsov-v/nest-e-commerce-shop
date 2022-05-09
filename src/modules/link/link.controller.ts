@@ -34,8 +34,8 @@ export class LinkController {
 
   @HttpCode(200)
   @Patch(':id')
-  async updateLink(@Param() id: string) {
-    return await this.linkService.updateLink(id);
+  async updateLink(@Param() id: string, @Body() dto) {
+    return await this.linkService.updateLink(id, dto);
   }
 
   @HttpCode(200)

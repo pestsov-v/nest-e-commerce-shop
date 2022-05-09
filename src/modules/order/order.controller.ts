@@ -7,7 +7,7 @@ export class OrderController {
 
   @Get('orders')
   async getOrders() {
-    return this.orderService.
+    return await this.orderService.getOrders()
   }
 
 }

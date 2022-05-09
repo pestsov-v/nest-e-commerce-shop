@@ -19,7 +19,7 @@ export class ProductService {
 
     return product;
   }
-  //
+
   async getProducts(): Promise<Product[]> {
     const products: Product[] = await this.productRepository.find();
 

@@ -1,18 +1,24 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  Unique,
 } from 'typeorm';
 import { IsNumber, IsString } from 'class-validator';
 import { User } from '../user/user.entity';
-import { BaseEntity } from "../../core/base/base.entity";
 
-@Entity('files')
-export class File extends BaseEntity {
+@Entity('file')
+@Unique(['fileId'])
+export class File {
   @PrimaryGeneratedColumn()
   fileId: string;
+
+  @Column()
+  userId: number;
 
   @Column()
   @IsString()
@@ -30,10 +36,15 @@ export class File extends BaseEntity {
   @IsNumber()
   size: number;
 
+  @CreateDateColumn()
+  createdAd: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
   @ManyToOne(() => User, (user: User) => user.image)
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @Column()
-  userId: number;
+
 }

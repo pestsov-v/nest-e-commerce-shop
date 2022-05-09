@@ -1,9 +1,11 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Order } from './order.entity';
 
@@ -20,6 +22,11 @@ export class OrderItemEntity {
   @Column()
   userRevenue: number;
 
+  @CreateDateColumn()
+  createdAd: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @ManyToOne(() => Order, (order) => order.orderItems)
   @JoinColumn({ name: 'orderId' })

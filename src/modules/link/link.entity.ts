@@ -6,18 +6,18 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   JoinTable,
-  Unique
+  Unique,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { BaseEntity } from '../../core/base/base.entity';
 import { User } from '../user/user.entity';
 import { Product } from '../product/product.entity';
 
-
 @Entity('link')
-@Unique(['id'])
-export class Link extends BaseEntity {
+@Unique(['linkId'])
+export class Link {
   @PrimaryGeneratedColumn()
-  id: string;
+  linkId: string;
 
   @Column({ unique: true })
   code: string;
@@ -26,10 +26,16 @@ export class Link extends BaseEntity {
   @JoinColumn({ name: 'userId' })
   user: User;
 
+  @CreateDateColumn()
+  createdAd: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
   @ManyToMany(() => Product)
   @JoinTable({
     name: 'linkProduct',
-    joinColumn: { name: 'linkId', referencedColumnName: 'id' },
+    joinColumn: { name: 'linkId', referencedColumnName: 'linkId' },
     inverseJoinColumn: { name: 'productId', referencedColumnName: 'productId' },
   })
   products: Product[];

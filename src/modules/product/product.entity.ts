@@ -1,20 +1,22 @@
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  Unique,
-} from 'typeorm';
-import { BaseEntity } from "../../core/base/base.entity";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
 
 @Entity('product')
 @Unique(['productId'])
-export class Product extends BaseEntity {
+export class Product {
   @PrimaryGeneratedColumn()
   productId: string;
+
   @Column()
   name: string;
   @Column()
   price: number;
+
+  @CreateDateColumn()
+  createdAd: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
   @Column({ default: true })
   active: boolean;
 }

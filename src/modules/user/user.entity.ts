@@ -1,15 +1,16 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Role } from './user-role.enum';
 import { File } from '../files/file.entity';
-import { BaseEntity } from "../../core/base/base.entity";
 
 @Entity('user')
-export class User extends BaseEntity {
+export class User {
   @PrimaryGeneratedColumn()
   userId: string;
 
@@ -36,6 +37,12 @@ export class User extends BaseEntity {
 
   @Column({ default: Date.now() })
   hashedRefreshToken: string;
+
+  @CreateDateColumn()
+  createdAd: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @ManyToOne(() => File, (file: File) => file.userId)
   files: File[];

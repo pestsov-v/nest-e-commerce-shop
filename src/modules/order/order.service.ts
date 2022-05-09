@@ -4,6 +4,7 @@ import { OrderRepository } from './order.repository';
 import { Repository } from 'typeorm';
 import { Order } from './order.entity';
 import { ORDER_NOT_FOUNT } from './order.contants';
+import { CreateOrderDto } from './dto/create-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -11,6 +12,11 @@ export class OrderService {
     @InjectRepository(OrderRepository)
     private readonly orderRepository: Repository<Order>,
   ) {}
+
+  async createOrder(dto) {
+    const order = this.orderRepository.save(dto);
+    return order;
+  }
 
   async getOrders() {
     const orders = await this.orderRepository.find({

@@ -44,6 +44,7 @@ export class Order extends BaseEntity {
     return `${this.firstName} ${this.lastName}`;
   }
 
+  @Expose()
   get total() {
     return this.orderItems.reduce((sum, item) => sum + item.userRevenue, 0);
   }

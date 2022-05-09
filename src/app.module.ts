@@ -14,6 +14,7 @@ import { SessionModule } from './modules/session/session.module';
 import { FilesModule } from './modules/files/files.module';
 import { OrderModule } from './modules/order/order.module';
 import { LinkModule } from './modules/link/link.module';
+import { ItemModule } from './modules/item/item.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { LinkModule } from './modules/link/link.module';
     FilesModule,
     OrderModule,
     LinkModule,
+    ItemModule,
   ],
   controllers: [AppController],
   providers: [

@@ -42,7 +42,7 @@ export class OrderService {
 
     if (!order) throw new HttpException(ORDER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-    order.orderItems = dto.orderItems;
+    order.items = dto.items;
     order.lastName = dto.lastName;
     order.firstName = dto.firstName;
     order.zip = dto.zip;

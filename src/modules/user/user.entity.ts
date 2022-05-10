@@ -1,16 +1,17 @@
 import {
   Column,
   CreateDateColumn,
-  Entity, JoinColumn,
+  Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
+  UpdateDateColumn,
+} from 'typeorm';
 import { Role } from './user-role.enum';
 import { File } from '../files/file.entity';
 import { Order } from '../order/order.entity';
-import { Link } from "../link/link.entity";
+import { Link } from '../link/link.entity';
 
 @Entity('user')
 export class User {
@@ -56,7 +57,7 @@ export class User {
   orders: Order[];
 
   @OneToMany(() => Link, (link) => link.linkId, {
-    createForeignKeyConstraints: false
+    createForeignKeyConstraints: false,
   })
   link: Link;
 }

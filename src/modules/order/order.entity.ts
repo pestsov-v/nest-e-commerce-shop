@@ -72,8 +72,8 @@ export class Order {
   })
   link: Link;
 
-  @OneToMany(() => Item, (orderItem) => orderItem.order)
-  orderItems: Item[];
+  @OneToMany(() => Item, (items) => items.order)
+  items: Item[];
 
   @ManyToOne(() => User, (user) => user.orders, {
     createForeignKeyConstraints: false,
@@ -90,6 +90,6 @@ export class Order {
 
   @Expose()
   get total() {
-    return this.orderItems.reduce((sum, item) => sum + item.userRevenue, 0);
+    return this.items.reduce((sum, item) => sum + item.userRevenue, 0);
   }
 }

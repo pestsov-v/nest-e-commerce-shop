@@ -8,6 +8,7 @@ import {
   LINKS_NOT_FOUND,
   USER_LINKS_NOT_FOUND,
 } from './link.constants';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class LinkService {
@@ -15,11 +16,11 @@ export class LinkService {
     @InjectRepository(LinkRepository) private linkRepository: Repository<Link>,
   ) {}
 
-  async createLink(dto) {
-    const link = await this.linkRepository.save({
-      code: dto.code,
-      user: dto.userId,
-      products: dto.productId,
+  async createLink(products, user: User): Promise<Link> {
+    const link: Link = await this.linkRepository.save({
+      code: Math.random().toString(36).substr(6),
+      user,
+      products: products.map((id) => ({ id })),
     });
 
     return link;
@@ -45,15 +46,24 @@ export class LinkService {
 
   async getUserLink(userId) {
     const links = await this.linkRepository.find({
-      relations: ['orders'],
-      loadRelationIds: true,
       where: { user: userId },
+      relations: ['orders'],
     });
 
     if (!links)
       throw new HttpException(USER_LINKS_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-    return links;
+    const link = links.map((link) => {
+      const completedOrders = link.orders.filter((o) => o.complete);
+
+      return {
+        code: link.code,
+        count: completedOrders.length,
+        revenue: completedOrders.reduce((s, o) => s + o.total, 0),
+      };
+    });
+
+    return link;
   }
 
   async updateLink(id, dto) {

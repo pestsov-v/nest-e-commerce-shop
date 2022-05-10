@@ -27,8 +27,6 @@ export class AuthService {
       password: await this.authHelper.hashData(dto.password),
     });
 
-    console.log(user)
-
     if (!user) throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
     return user;
   }

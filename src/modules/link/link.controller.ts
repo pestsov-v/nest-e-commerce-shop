@@ -10,41 +10,42 @@ import {
 } from '@nestjs/common';
 import { LinkService } from './link.service';
 
-@Controller('link')
+@Controller()
 export class LinkController {
   constructor(private readonly linkService: LinkService) {}
 
   @HttpCode(201)
-  @Post()
+  @Post('link')
   async createLink(@Body() dto) {
-    await this.linkService.createLink(dto);
+    const link = await this.linkService.createLink(dto);
+    console.log(link)
   }
 
   @HttpCode(200)
-  @Get()
+  @Get('link')
   async getLinks() {
     return await this.linkService.getLinks();
   }
 
   @HttpCode(200)
-  @Get(':linkId')
+  @Get('link/:linkId')
   async getLink(@Param() id: string) {
     return await this.linkService.getLink(id);
   }
 
-  @Get('user/links/:linkId')
+  @Get('user/link/:linkId')
   async getUserLink(@Param() id: string) {
     return await this.linkService.getUserLink(id);
   }
 
   @HttpCode(200)
-  @Patch(':linkId')
+  @Patch('link/:linkId')
   async updateLink(@Param() id: string, @Body() dto) {
     return await this.linkService.updateLink(id, dto);
   }
 
   @HttpCode(200)
-  @Delete(':linkId')
+  @Delete('link/:linkId')
   async deleteLink(@Param() id: string) {
     return await this.linkService.deleteLink(id);
   }

@@ -1,13 +1,16 @@
 import {
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+  UpdateDateColumn
+} from "typeorm";
 import { Role } from './user-role.enum';
 import { File } from '../files/file.entity';
+import { Order } from '../order/order.entity';
+import { Link } from "../link/link.entity";
 
 @Entity('user')
 export class User {
@@ -46,4 +49,14 @@ export class User {
 
   @ManyToOne(() => File, (file: File) => file.userId)
   files: File[];
+
+  @OneToMany(() => Order, (order) => order.user, {
+    createForeignKeyConstraints: false,
+  })
+  orders: Order[];
+
+  @OneToMany(() => Link, (link) => link.linkId, {
+    createForeignKeyConstraints: false
+  })
+  link: Link;
 }

@@ -1,4 +1,4 @@
-import { OrderItemEntity } from "../order-item.entity";
+import { Item } from "../../item/item.entity";
 
 export class CreateOrderDto {
   id: string;
@@ -14,7 +14,7 @@ export class CreateOrderDto {
   city: string;
   zip: string;
   complete: boolean;
-  orderItems: OrderItemEntity
+  orderItems: Item
 }
 
 

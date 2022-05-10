@@ -6,6 +6,12 @@ import {
   Param,
   Patch,
   Delete,
+  CacheKey,
+  CacheTTL,
+  UseInterceptors,
+  CacheInterceptor,
+  Inject,
+  CACHE_MANAGER,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -14,10 +20,14 @@ import { ProductGetResponses } from './responses/product.get.responses';
 import { productsGetResponses } from './responses/products.get.responses';
 import { Product } from './product.entity';
 import { ProductDeleteResponses } from './responses/product.delete.responses';
+import { Cache } from 'cache-manager';
 
 @Controller('product')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   @Post()
   async createProduct(
@@ -44,6 +54,27 @@ export class ProductController {
     };
   }
 
+  @CacheKey('products_frontend')
+  @CacheTTL(1800)
+  @UseInterceptors(CacheInterceptor)
+  @Get('frontend')
+  async frontend() {
+    return await this.productService.getProducts();
+  }
+
+  @Get('backend')
+  async backend() {
+    let products = await this.cacheManager.get('products_backend');
+
+    if (!products) {
+      products = await this.productService.getProducts();
+
+      await this.cacheManager.set('products_backend', products, { ttl: 1800 });
+    }
+
+    return products;
+  }
+
   @Get(':id')
   async getProduct(@Param('id') id: string): Promise<ProductGetResponses> {
     const product: Product = await this.productService.getProduct(id);
@@ -60,6 +91,9 @@ export class ProductController {
     @Body() dto: UpdateProductDto,
   ): Promise<ProductGetResponses> {
     const product: Product = await this.productService.updateProduct(id, dto);
+
+    await this.cacheManager.del('products_backend')
+    await this.cacheManager.del('products_frontend')
 
     return {
       status: 'success',

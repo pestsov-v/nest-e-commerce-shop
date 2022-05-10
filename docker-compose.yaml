@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  backend:
+      build: .
+      ports:
+        - 5000: 3001
+      volumes:
+        - .:/app
+      depends_on:
+        - posgresdb
+        - redis
+
+  posgresdb:
+      image: postgres
+      restart: always
+      environment:
+        database: admin
+        username: postgres
+        password: root
+      volumes:
+        - .dbdata:/var/lib/posgresql
+      ports:
+        - 15432:5432
+
+  redis:
+    image: redis
+    ports:
+      - 6379: 6379

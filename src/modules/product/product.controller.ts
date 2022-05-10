@@ -21,12 +21,14 @@ import { productsGetResponses } from './responses/products.get.responses';
 import { Product } from './product.entity';
 import { ProductDeleteResponses } from './responses/product.delete.responses';
 import { Cache } from 'cache-manager';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller('product')
 export class ProductController {
   constructor(
-    private readonly productService: ProductService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly productService: ProductService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   @Post()
@@ -34,6 +36,7 @@ export class ProductController {
     @Body() dto: CreateProductDto,
   ): Promise<ProductGetResponses> {
     const product = await this.productService.createProduct(dto);
+    this.eventEmitter.emit('productUpdated', product);
 
     return {
       status: 'success',
@@ -41,9 +44,16 @@ export class ProductController {
     };
   }
 
+  @CacheKey('getProducts')
+  @CacheTTL(1800)
+  @UseInterceptors(CacheInterceptor)
   @Get()
   async getProducts(): Promise<productsGetResponses> {
-    const products: Product[] = await this.productService.getProducts();
+    let products: Product[] = await this.cacheManager.get('getProducts');
+    if (!products) {
+      products = await this.productService.getProducts();
+      await this.cacheManager.set('getProducts', products, { ttl: 1800 });
+    }
 
     return {
       status: 'success',
@@ -52,27 +62,6 @@ export class ProductController {
         data: products,
       },
     };
-  }
-
-  @CacheKey('products_frontend')
-  @CacheTTL(1800)
-  @UseInterceptors(CacheInterceptor)
-  @Get('frontend')
-  async frontend() {
-    return await this.productService.getProducts();
-  }
-
-  @Get('backend')
-  async backend() {
-    let products = await this.cacheManager.get('products_backend');
-
-    if (!products) {
-      products = await this.productService.getProducts();
-
-      await this.cacheManager.set('products_backend', products, { ttl: 1800 });
-    }
-
-    return products;
   }
 
   @Get(':id')
@@ -91,9 +80,7 @@ export class ProductController {
     @Body() dto: UpdateProductDto,
   ): Promise<ProductGetResponses> {
     const product: Product = await this.productService.updateProduct(id, dto);
-
-    await this.cacheManager.del('products_backend')
-    await this.cacheManager.del('products_frontend')
+    this.eventEmitter.emit('productUpdated');
 
     return {
       status: 'success',
@@ -106,6 +93,7 @@ export class ProductController {
     @Param('id') id: string,
   ): Promise<ProductDeleteResponses> {
     const product = await this.productService.deleteProduct(id);
+    this.eventEmitter.emit('productUpdated');
 
     return {
       status: 'success',

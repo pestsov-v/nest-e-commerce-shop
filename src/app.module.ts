@@ -13,9 +13,11 @@ import { FilesModule } from './modules/files/files.module';
 import { OrderModule } from './modules/order/order.module';
 import { LinkModule } from './modules/link/link.module';
 import { ItemModule } from './modules/item/item.module';
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(config),
     ProductModule,

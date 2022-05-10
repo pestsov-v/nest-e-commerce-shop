@@ -8,9 +8,7 @@ import {
   Param,
   Patch,
   Post,
-  UploadedFile,
   UseGuards,
-  UseInterceptors,
   Session as GetSession,
 } from '@nestjs/common';
 import {

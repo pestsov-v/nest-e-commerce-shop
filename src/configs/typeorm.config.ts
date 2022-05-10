@@ -4,7 +4,7 @@ export const config: TypeOrmModuleOptions = {
   type: 'postgres',
   port: 5432,
   host: 'localhost',
-  database: 'admin',
+  database: 'admin2',
   username: 'postgres',
   password: 'root',
   synchronize: true,

@@ -5,8 +5,6 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderRepository } from './order.repository';
 import { Order } from './order.entity';
-import { OrderItemEntity } from './order-item.entity';
-import { OrderItemRepository } from './order-item.repository';
 
 @Module({
   imports: [
@@ -14,8 +12,6 @@ import { OrderItemRepository } from './order-item.repository';
     TypeOrmModule.forFeature([
       OrderRepository,
       Order,
-      OrderItemRepository,
-      OrderItemEntity,
     ]),
   ],
   controllers: [OrderController],

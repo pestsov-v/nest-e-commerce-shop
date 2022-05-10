@@ -7,15 +7,17 @@ import { ProductModule } from './modules/product/product.module';
 import { config } from './configs/typeorm.config';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AccessTokenGuard } from './core/guard/accessToken.guard';
 import { RolesGuard } from './core/guard/roles.guard';
 import { SessionModule } from './modules/session/session.module';
 import { FilesModule } from './modules/files/files.module';
 import { OrderModule } from './modules/order/order.module';
+import { LinkModule } from './modules/link/link.module';
+import { ItemModule } from './modules/item/item.module';
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(config),
     ProductModule,
@@ -24,6 +26,8 @@ import { OrderModule } from './modules/order/order.module';
     SessionModule,
     FilesModule,
     OrderModule,
+    LinkModule,
+    ItemModule,
   ],
   controllers: [AppController],
   providers: [

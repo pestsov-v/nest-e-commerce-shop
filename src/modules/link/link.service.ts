@@ -1,14 +1,16 @@
+import {
+  LINK_NOT_FOUND,
+  LINKS_LIST_EMPTY,
+  USER_LINKS_NOT_FOUND,
+} from './link.constants';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkRepository } from './link.repository';
 import { Repository } from 'typeorm';
 import { Link } from './link.entity';
-import {
-  LINK_NOT_FOUND,
-  LINKS_NOT_FOUND,
-  USER_LINKS_NOT_FOUND,
-} from './link.constants';
 import { User } from '../user/user.entity';
+import { UserLinkResponse } from './response/user-link.response';
+import { UpdateLinkDto } from './dto/update-link.dto';
 
 @Injectable()
 export class LinkService {
@@ -26,26 +28,25 @@ export class LinkService {
     return link;
   }
 
-  async getLinks() {
-    const links = await this.linkRepository.find({
+  async getLinks(): Promise<Link[]> {
+    const links: Link[] = await this.linkRepository.find({
       relations: ['products'],
     });
 
-    if (!links) throw new HttpException(LINKS_NOT_FOUND, HttpStatus.NOT_FOUND);
+    if (!links) throw new HttpException(LINKS_LIST_EMPTY, HttpStatus.NOT_FOUND);
 
     return links;
   }
 
-  async getLink(id) {
-    const link = await this.linkRepository.findOne(id);
-
+  async getLink(id: string): Promise<Link> {
+    const link: Link = await this.linkRepository.findOne(id);
     if (!link) throw new HttpException(LINK_NOT_FOUND, HttpStatus.NOT_FOUND);
 
     return link;
   }
 
-  async getUserLink(userId) {
-    const links = await this.linkRepository.find({
+  async getUserLink(userId: string): Promise<UserLinkResponse[]> {
+    const links: Link[] = await this.linkRepository.find({
       where: { user: userId },
       relations: ['orders'],
     });
@@ -55,31 +56,31 @@ export class LinkService {
 
     const link = links.map((link) => {
       const completedOrders = link.orders.filter((o) => o.complete);
-
       return {
+        linkId: link.linkId,
         code: link.code,
         count: completedOrders.length,
         revenue: completedOrders.reduce((s, o) => s + o.total, 0),
       };
     });
 
+    if (!link) throw new HttpException(LINK_NOT_FOUND, HttpStatus.NOT_FOUND);
+
     return link;
   }
 
-  async updateLink(id, dto) {
-    const link = await this.getLink(id);
-
+  async updateLink(id: string, dto: UpdateLinkDto): Promise<Link> {
+    const link: Link = await this.getLink(id);
     if (!link) throw new HttpException(LINK_NOT_FOUND, HttpStatus.NOT_FOUND);
 
     link.code = dto.code;
-    link.user = dto.user;
     link.products = dto.products;
 
     return await this.linkRepository.save(link);
   }
 
-  async deleteLink(id) {
-    const link = await this.getLink(id);
+  async deleteLink(id): Promise<Link> {
+    const link: Link = await this.getLink(id);
 
     if (!link) throw new HttpException(LINK_NOT_FOUND, HttpStatus.NOT_FOUND);
 

@@ -1,3 +1,3 @@
 export class CreateLinkDto {
-  products: number[]
+  products: number[];
 }

@@ -7,9 +7,7 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Post,
   UseGuards,
-  Session as GetSession,
 } from '@nestjs/common';
 import {
   CHANGE_USER_ROLE,
@@ -18,9 +16,9 @@ import {
   DELETED_USER,
   REACTIVATED_USER,
   UPDATE_USER,
+  USER_COUNT,
   USER_ROLE_NOT_EXISTS,
 } from './user.constants';
-import { CreateUserDto } from './dto/createUser.dto';
 import { UserService } from './user.service';
 import { UsersGetResponse } from './response/users.get.response';
 import { UserGetResponse } from './response/user.get.response';
@@ -41,19 +39,7 @@ import { RolesGuard } from '../../core/guard/roles.guard';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService
-  ) {}
-
-  @Post()
-  async signup(@Body() dto: CreateUserDto): Promise<UserGetResponse> {
-    const user: User = await this.userService.createUser(dto);
-
-    return {
-      status: statusEnum.SUCCESS,
-      data: user,
-    };
-  }
+  constructor(private readonly userService: UserService) {}
 
   @Roles(Role.USER)
   @UseGuards(RolesGuard)
@@ -63,14 +49,20 @@ export class UserController {
 
     return {
       status: statusEnum.SUCCESS,
-      amount: users.length,
+      amount: USER_COUNT(users.length),
       data: {
         data: users,
       },
     };
   }
 
-  @Get('users')
+  @Get('rankings')
+  async getUserRankings() {
+    const users = this.userService.getUserRanking();
+    return users;
+  }
+
+  @Get('roles')
   async getRoleUsers(): Promise<getRoleResponse> {
     const users: User[] = await this.userService.getRoleUsers();
 

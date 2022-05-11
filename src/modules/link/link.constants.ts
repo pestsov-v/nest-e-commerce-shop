@@ -14,6 +14,7 @@ export const GET_USER_LINK_SUCCESS_MESSAGE =
   'Пользователь успешно получил все ссылки';
 export const LINK_UPDATED_SUCCESS_MESSAGE = 'Ссылка была успешно обновлена';
 export const LINK_DELETED_SUCCESS_MESSAGE = 'Ссылка была успешно удалена';
+export const GET_LINK_BY_CODE_SUCCESS_MESSAGE = 'Ссылка была успешно получена';
 
 export const USER_NOT_AUTH = {
   status: statusEnum.FAIL,

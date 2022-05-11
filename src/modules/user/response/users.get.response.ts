@@ -2,7 +2,7 @@ import { User } from '../user.entity';
 
 export class UsersGetResponse {
   status: string;
-  amount: number;
+  amount: string;
   data: {
     data: User[];
   };

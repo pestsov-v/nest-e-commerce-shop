@@ -43,6 +43,20 @@ export class UserService {
     return user;
   }
 
+  // delete in future
+  async getUserRanking() {
+    const users = await this.userRepository.find({
+      relations: ['orders', 'orders.items'],
+    });
+
+    return users.map((user) => {
+      return {
+        name: `${user.firstName} ${user.lastName}`,
+        revenue: user.orders,
+      };
+    });
+  }
+
   async getRoleUsers(): Promise<User[]> {
     const roleUsers: User[] = await this.userRepository.find({
       where: { role: Role.USER },

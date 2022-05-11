@@ -69,6 +69,14 @@ export class LinkService {
     return link;
   }
 
+  async getLinkByCode(code) {
+    const link = await this.linkRepository.findOne({ where: { code: code }, relations: ['user', 'products']});
+
+    if (!link) throw new HttpException(LINK_NOT_FOUND, HttpStatus.NOT_FOUND)
+
+    return link;
+  }
+
   async updateLink(id: string, dto: UpdateLinkDto): Promise<Link> {
     const link: Link = await this.getLink(id);
     if (!link) throw new HttpException(LINK_NOT_FOUND, HttpStatus.NOT_FOUND);

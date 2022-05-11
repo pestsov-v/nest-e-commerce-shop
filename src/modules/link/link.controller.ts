@@ -14,6 +14,7 @@ import {
   Session as GetSession,
 } from '@nestjs/common';
 import {
+  GET_LINK_BY_CODE_SUCCESS_MESSAGE,
   GET_USER_LINK_SUCCESS_MESSAGE,
   LINK_CREATED_SUCCESS,
   LINK_DELETED_SUCCESS_MESSAGE,
@@ -40,6 +41,7 @@ import { GetUserLinkResponse } from './response/get-user-link.response';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { UpdateLinkResponse } from './response/update-link.response';
 import { DeleteLinkResponse } from './response/delete-link.response';
+import { GetLinkByCodeResponse } from './response/get-link-by-code.response';
 
 @Controller()
 export class LinkController {
@@ -89,6 +91,19 @@ export class LinkController {
       data: {
         data: links,
       },
+    };
+  }
+
+  @Get('link/:code')
+  async getLinkByCode(
+    @Param('code') code: string,
+  ): Promise<GetLinkByCodeResponse> {
+    const link = await this.linkService.getLinkByCode(code);
+
+    return {
+      status: statusEnum.SUCCESS,
+      message: GET_LINK_BY_CODE_SUCCESS_MESSAGE,
+      data: link,
     };
   }
 

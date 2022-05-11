@@ -22,7 +22,7 @@ import { Product } from './product.entity';
 import { ProductDeleteResponses } from './responses/product.delete.responses';
 import { Cache } from 'cache-manager';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { statusEnum } from "../../core/enum/status.enum";
+import { statusEnum } from '../../core/enum/status.enum';
 
 @Controller('product')
 export class ProductController {

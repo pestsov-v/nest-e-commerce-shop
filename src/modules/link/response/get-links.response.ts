@@ -1,9 +1,9 @@
-import { Link } from "../link.entity";
+import { Link } from '../link.entity';
 
 export class GetLinksResponse {
   status: string;
   amount: number;
   data: {
-    data: Link[]
-  }
+    data: Link[];
+  };
 }

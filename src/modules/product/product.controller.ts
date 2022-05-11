@@ -23,6 +23,7 @@ import { ProductDeleteResponses } from './responses/product.delete.responses';
 import { Cache } from 'cache-manager';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { statusEnum } from '../../core/enum/status.enum';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('product')
 export class ProductController {
@@ -32,6 +33,7 @@ export class ProductController {
     private eventEmitter: EventEmitter2,
   ) {}
 
+  @ApiBody({ type: CreateProductDto })
   @Post()
   async createProduct(
     @Body() dto: CreateProductDto,
@@ -49,6 +51,7 @@ export class ProductController {
   @CacheTTL(1800)
   @UseInterceptors(CacheInterceptor)
   @Get()
+  @ApiBody({ type: productsGetResponses })
   async getProducts(): Promise<productsGetResponses> {
     let products: Product[] = await this.cacheManager.get('getProducts');
     if (!products) {

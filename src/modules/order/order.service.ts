@@ -12,8 +12,21 @@ export class OrderService {
     private readonly orderRepository: Repository<Order>,
   ) {}
 
-  async createOrder(dto) {
-    const order = this.orderRepository.save(dto);
+  async createOrder(link, user, dto) {
+    const order = this.orderRepository.save({
+      userId: link.user.userId,
+      code: link.code,
+      userEmail: user.email,
+      address: dto.address,
+      country: dto.country,
+      city: dto.city,
+      zip: dto.zip,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      email: user.email,
+    });
+
+    console.log(order)
     return order;
   }
 

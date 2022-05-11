@@ -15,5 +15,6 @@ import * as redisStore from 'cache-manager-redis-store';
   ],
   providers: [LinkService],
   controllers: [LinkController],
+  exports: [LinkService]
 })
 export class LinkModule {}

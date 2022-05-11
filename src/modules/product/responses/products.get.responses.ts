@@ -1,9 +1,14 @@
 import { Product } from '../product.entity';
+import { ApiProperty } from "@nestjs/swagger";
 
 export class productsGetResponses {
+  @ApiProperty()
   status: string;
+  @ApiProperty()
   amount: number;
+  @ApiProperty()
   data: {
-    data: Product[];
+    @ApiProperty({ type: () => [Product] })
+    products: Product[];
   };
-}
+} 

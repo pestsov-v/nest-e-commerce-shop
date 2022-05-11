@@ -22,6 +22,8 @@ import { Product } from './product.entity';
 import { ProductDeleteResponses } from './responses/product.delete.responses';
 import { Cache } from 'cache-manager';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { statusEnum } from '../../core/enum/status.enum';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('product')
 export class ProductController {
@@ -31,15 +33,16 @@ export class ProductController {
     private eventEmitter: EventEmitter2,
   ) {}
 
+  @ApiBody({ type: CreateProductDto })
   @Post()
   async createProduct(
     @Body() dto: CreateProductDto,
   ): Promise<ProductGetResponses> {
     const product = await this.productService.createProduct(dto);
-    this.eventEmitter.emit('productUpdated', product);
+    this.eventEmitter.emit('productUpdated');
 
     return {
-      status: 'success',
+      status: statusEnum.SUCCESS,
       data: product,
     };
   }
@@ -48,6 +51,7 @@ export class ProductController {
   @CacheTTL(1800)
   @UseInterceptors(CacheInterceptor)
   @Get()
+  @ApiBody({ type: productsGetResponses })
   async getProducts(): Promise<productsGetResponses> {
     let products: Product[] = await this.cacheManager.get('getProducts');
     if (!products) {
@@ -56,7 +60,7 @@ export class ProductController {
     }
 
     return {
-      status: 'success',
+      status: statusEnum.SUCCESS,
       amount: products.length,
       data: {
         data: products,
@@ -69,7 +73,7 @@ export class ProductController {
     const product: Product = await this.productService.getProduct(id);
 
     return {
-      status: 'success',
+      status: statusEnum.SUCCESS,
       data: product,
     };
   }
@@ -83,7 +87,7 @@ export class ProductController {
     this.eventEmitter.emit('productUpdated');
 
     return {
-      status: 'success',
+      status: statusEnum.SUCCESS,
       data: product,
     };
   }
@@ -96,7 +100,7 @@ export class ProductController {
     this.eventEmitter.emit('productUpdated');
 
     return {
-      status: 'success',
+      status: statusEnum.SUCCESS,
       data: {
         message: 'Продукт был успешно удалён',
         removed_product: product,

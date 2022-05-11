@@ -1,14 +1,46 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
+import { LinkService } from '../link/link.service';
+import { LINK_NOT_FOUND, USER_NOT_AUTH } from '../link/link.constants';
+import { UserService } from '../user/user.service';
+import { Session as GetSession } from '@nestjs/common/decorators/http/route-params.decorator';
+import { UserSession } from '../auth/type/session.type';
+import { Product } from "../product/product.entity";
+import { ProductService } from "../product/product.service";
 
 @Controller()
 export class OrderController {
-  constructor(private orderService: OrderService) {}
+  constructor(
+    private orderService: OrderService,
+    private linkService: LinkService,
+    private userService: UserService,
+    private productService: ProductService
+  ) {}
 
   @HttpCode(201)
   @Post('order')
-  async createOrder(@Body() dto) {
-    return this.orderService.createOrder(dto);
+  async createOrder(@GetSession() session: UserSession, @Body() dto) {
+    const link = await this.linkService.getLinkByCode(dto.code);
+    if (!link) throw new HttpException(LINK_NOT_FOUND, HttpStatus.NOT_FOUND);
+
+    const userId: string = session.user.userId;
+    const user = await this.userService.getUser(userId);
+    if (!user) throw new HttpException(USER_NOT_AUTH, HttpStatus.NOT_FOUND);
+
+    const order = this.orderService.createOrder(link, user, dto);
+
+    return order
   }
 
   @HttpCode(200)

@@ -29,6 +29,10 @@ export const CHANGE_USER_ROLE = (role) => {
   return `Пользователю теперь принадлежит роль: ${role}`;
 };
 
+export const USER_COUNT = (amount) => {
+  return `Количество зарегистрированных пользователей составляет: ${amount}`;
+};
+
 export const DEACTIVATED_USER_MESSAGE = (amount) => {
   return `Количество деактивированных пользователей: ${amount}`;
 };

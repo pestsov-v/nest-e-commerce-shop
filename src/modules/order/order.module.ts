@@ -5,14 +5,17 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderRepository } from './order.repository';
 import { Order } from './order.entity';
+import { LinkModule } from '../link/link.module';
+import { UserModule } from '../user/user.module';
+import { ProductModule } from "../product/product.module";
 
 @Module({
   imports: [
+    ProductModule,
+    UserModule,
+    LinkModule,
     ConfigModule,
-    TypeOrmModule.forFeature([
-      OrderRepository,
-      Order,
-    ]),
+    TypeOrmModule.forFeature([OrderRepository, Order]),
   ],
   controllers: [OrderController],
   providers: [OrderService],

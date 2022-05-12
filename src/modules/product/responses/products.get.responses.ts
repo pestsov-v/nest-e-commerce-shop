@@ -8,7 +8,6 @@ export class productsGetResponses {
   amount: number;
   @ApiProperty()
   data: {
-    @ApiProperty({ type: () => [Product] })
     products: Product[];
   };
 } 

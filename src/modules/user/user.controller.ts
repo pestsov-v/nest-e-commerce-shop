@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpException,
-  HttpStatus,
-  Param,
-  Patch,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, UseGuards } from "@nestjs/common";
 import {
   CHANGE_USER_ROLE,
   DEACTIVATED_USER,
@@ -17,25 +7,25 @@ import {
   REACTIVATED_USER,
   UPDATE_USER,
   USER_COUNT,
-  USER_ROLE_NOT_EXISTS,
-} from './user.constants';
-import { UserService } from './user.service';
-import { UsersGetResponse } from './response/users.get.response';
-import { UserGetResponse } from './response/user.get.response';
-import { ChangeUserRoleDto } from './dto/changeUserRole.dto';
-import { ReactivatedResponse } from './response/reactivated.response';
-import { User } from './user.entity';
-import { DeactivatedResponse } from './response/deactivated.response';
-import { ChangeUserRoleResponse } from './response/changeUserRole.response';
-import { getRoleResponse } from './response/getRole.response';
-import { UpdateUserDto } from './dto/updateUser.dto';
-import { UpdateUserResponse } from './response/updateUser.response';
-import { statusEnum } from '../../core/enum/status.enum';
-import { DeleteUserResponse } from './response/deleteUser.response';
-import { DeactivatedUsersResponse } from './response/deactivatedUsers.response';
-import { Roles } from '../../core/decorator/roles.decorator';
-import { Role } from './user-role.enum';
-import { RolesGuard } from '../../core/guard/roles.guard';
+  USER_ROLE_NOT_EXISTS
+} from "./user.constants";
+import { UserService } from "./user.service";
+import { UsersGetResponse } from "./response/users.get.response";
+import { UserGetResponse } from "./response/user.get.response";
+import { ChangeUserRoleDto } from "./dto/changeUserRole.dto";
+import { ReactivatedResponse } from "./response/reactivated.response";
+import { User } from "./user.entity";
+import { DeactivatedResponse } from "./response/deactivated.response";
+import { ChangeUserRoleResponse } from "./response/changeUserRole.response";
+import { getRoleResponse } from "./response/getRole.response";
+import { UpdateUserDto } from "./dto/updateUser.dto";
+import { UpdateUserResponse } from "./response/updateUser.response";
+import { statusEnum } from "../../core/enum/status.enum";
+import { DeleteUserResponse } from "./response/deleteUser.response";
+import { DeactivatedUsersResponse } from "./response/deactivatedUsers.response";
+import { Roles } from "../../core/decorator/roles.decorator";
+import { Role } from "./user-role.enum";
+import { RolesGuard } from "../../core/guard/roles.guard";
 
 @Controller('user')
 export class UserController {
@@ -56,12 +46,14 @@ export class UserController {
     };
   }
 
+  @Roles(Role.MANAGER, Role.ADMIN)
   @Get('rankings')
   async getUserRankings() {
     const users = this.userService.getUserRanking();
     return users;
   }
 
+  @Roles(Role.MODERATOR, Role.ADMIN)
   @Get('roles')
   async getRoleUsers(): Promise<getRoleResponse> {
     const users: User[] = await this.userService.getRoleUsers();
@@ -75,6 +67,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.MODERATOR, Role.ADMIN)
   @Get('managers')
   async getRoleManagers(): Promise<getRoleResponse> {
     const users: User[] = await this.userService.getRoleManagers();
@@ -88,6 +81,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.MODERATOR, Role.ADMIN)
   @Get('moderators')
   async getRoleModerators(): Promise<getRoleResponse> {
     const users: User[] = await this.userService.getRoleModerators();
@@ -101,6 +95,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.ADMIN)
   @Get('deactivated-users')
   async getDeactivatedUsers(): Promise<DeactivatedUsersResponse> {
     const users: User[] = await this.userService.getDeactivatedUsers();
@@ -114,6 +109,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.USER, Role.MANAGER, Role.MODERATOR, Role.ADMIN)
   @Get(':id')
   async getUser(@Param() id: string): Promise<UserGetResponse> {
     const user: User = await this.userService.getUser(id);
@@ -124,6 +120,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.USER, Role.MANAGER, Role.MODERATOR, Role.ADMIN)
   @Patch(':id')
   async updateUser(
     @Param() id: string,
@@ -138,6 +135,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.ADMIN)
   @Patch(':id/deactivated')
   async deactivatedUser(@Param() id: string): Promise<DeactivatedResponse> {
     const user: User = await this.userService.deactivateUser(id);
@@ -149,6 +147,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.ADMIN)
   @Patch(':id/reactivated')
   async reactivatedUser(id: string): Promise<ReactivatedResponse> {
     const user: User = await this.userService.reactivateUser(id);
@@ -160,6 +159,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.ADMIN)
   @Patch(':id/role')
   async changeUserRole(
     @Param() id: string,
@@ -180,6 +180,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.ADMIN)
   @Delete()
   async deleteUser(@Param() id: string): Promise<DeleteUserResponse> {
     const user: User = await this.userService.deleteUser(id);

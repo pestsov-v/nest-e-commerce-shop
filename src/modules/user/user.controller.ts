@@ -56,12 +56,14 @@ export class UserController {
     };
   }
 
+  @Roles(Role.MANAGER, Role.ADMIN)
   @Get('rankings')
   async getUserRankings() {
     const users = this.userService.getUserRanking();
     return users;
   }
 
+  @Roles(Role.MODERATOR, Role.ADMIN)
   @Get('roles')
   async getRoleUsers(): Promise<getRoleResponse> {
     const users: User[] = await this.userService.getRoleUsers();
@@ -75,6 +77,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.MODERATOR, Role.ADMIN)
   @Get('managers')
   async getRoleManagers(): Promise<getRoleResponse> {
     const users: User[] = await this.userService.getRoleManagers();
@@ -88,6 +91,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.MODERATOR, Role.ADMIN)
   @Get('moderators')
   async getRoleModerators(): Promise<getRoleResponse> {
     const users: User[] = await this.userService.getRoleModerators();
@@ -101,6 +105,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.ADMIN)
   @Get('deactivated-users')
   async getDeactivatedUsers(): Promise<DeactivatedUsersResponse> {
     const users: User[] = await this.userService.getDeactivatedUsers();
@@ -114,6 +119,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.USER, Role.MANAGER, Role.MODERATOR, Role.ADMIN)
   @Get(':id')
   async getUser(@Param() id: string): Promise<UserGetResponse> {
     const user: User = await this.userService.getUser(id);
@@ -124,6 +130,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.USER, Role.MANAGER, Role.MODERATOR, Role.ADMIN)
   @Patch(':id')
   async updateUser(
     @Param() id: string,
@@ -138,6 +145,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.ADMIN)
   @Patch(':id/deactivated')
   async deactivatedUser(@Param() id: string): Promise<DeactivatedResponse> {
     const user: User = await this.userService.deactivateUser(id);
@@ -149,6 +157,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.ADMIN)
   @Patch(':id/reactivated')
   async reactivatedUser(id: string): Promise<ReactivatedResponse> {
     const user: User = await this.userService.reactivateUser(id);
@@ -160,6 +169,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.ADMIN)
   @Patch(':id/role')
   async changeUserRole(
     @Param() id: string,
@@ -180,6 +190,7 @@ export class UserController {
     };
   }
 
+  @Roles(Role.ADMIN)
   @Delete()
   async deleteUser(@Param() id: string): Promise<DeleteUserResponse> {
     const user: User = await this.userService.deleteUser(id);

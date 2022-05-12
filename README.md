@@ -2,71 +2,47 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Короткое описание
 
-## Description
+Проект сделан на основе стэка: Nest.js, PostgreSQL, Docker, RedisStore, CacheManager
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Простой интернет-магазин со следующими функциями: 
+- Авторизация с помощью JWT token, а именно, Access token и refresh token.
+- Наличие различных ролей для пользователей: User, Manager, Moderator, Admin.
+- Функционал пользователей: 
+  - Стандартный CRUD.
+  - Активация и деактивация пользователей (если пользователь хочет удалить аккаунт, 
+то пользователь меняет статус аккаунта на `false`, тем самым лишь деактивирует аккаунт, 
+удалить аккаунт может только Admin)
+  - Назначение ролей.
+  - Отдельные получения списков всех пользователей, только `users`, только `moderators`,
+только `managers`, только `admin`. 
+- Сессия пользователя, которая базируется на Redis. Таким образом некоторые данные пользователя 
+можно достать из JWT, а некоторые данные из сессии.
+- Кэширование данных с помощью RedisStore и CacheManager. 
+- Загрузка и удаление данных в формате PDF, DWG (чертежи AutoCAD) и Excel. Также доступна функция
+загрузки одновременно всех форматов.
+- CRUD операции продуктов. 
+- CRUD операции итемов - единица продукта, которая добавляется в корзину пользователя (итем 
+состоит из самого продукта и его количества, которое пользователь намерен купить)
+- CRUD операции ссылок - единица по которой находится один заказ пользователя. Пользователь
+может иметь несколько заказов и иметь к ним дсотуп в любое время, таким образом формируя историю.
+- CRUD операции заказов - сформированый заказ, который может быть оплачен.
+- Swagger документация ряда элементов. 
 
-## Installation
+## Запуск приложения
+Приложение можно запустить с помощью 3 различных видов:
+- Перейти по ссылке на Heroku и подёргать за эндпоинты.
+- Перейти по ссылке Git Actions и развернуть docker-compose e
 
-```bash
-$ npm install
-```
+## Оглавление
 
-## Running the app
 
-```bash
-# development
-$ npm run start
 
-# watch mode
-$ npm run start:dev
 
-# production mode
-$ npm run start:prod
-```
 
-## Test
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 

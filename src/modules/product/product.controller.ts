@@ -63,7 +63,7 @@ export class ProductController {
       status: statusEnum.SUCCESS,
       amount: products.length,
       data: {
-        data: products,
+        products: products,
       },
     };
   }
